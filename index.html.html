@@ -1,0 +1,2495 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Présences — Agence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+:root {
+  --navy:#1a2e4a;--navy-md:#243d5f;--navy-lt:#2e5080;
+  --cyan:#00bcd4;--cyan-lt:#e0f7fa;
+  --green:#22c55e;--green-lt:#dcfce7;
+  --orange:#f97316;--orange-lt:#fff3e0;
+  --red:#ef4444;--red-lt:#fef2f2;
+  --purple:#7c3aed;--purple-lt:#ede9fe;
+  --gray:#64748b;--gray-lt:#f1f5f9;
+  --border:#e2e8f0;--white:#fff;
+  --radius:10px;--shadow:0 1px 8px rgba(26,46,74,.10);--shadow-md:0 4px 20px rgba(26,46,74,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#eef2f7;color:var(--navy);min-height:100vh;}
+nav{background:linear-gradient(135deg,var(--navy),var(--navy-md));height:60px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(26,46,74,.3);}
+.nav-brand{display:flex;align-items:center;gap:10px;color:#fff;}
+.nav-icon{width:34px;height:34px;background:var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.nav-title{font-size:16px;font-weight:700;}.nav-sub{font-size:10px;opacity:.55;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.tabs{display:flex;background:var(--navy);border-top:1px solid rgba(255,255,255,.1);padding:0 24px;}
+.tab{padding:10px 18px;font-size:13px;font-weight:600;color:rgba(255,255,255,.5);cursor:pointer;border-bottom:3px solid transparent;transition:all .18s;white-space:nowrap;}
+.tab:hover{color:rgba(255,255,255,.8);}.tab.active{color:#fff;border-bottom-color:var(--cyan);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+.btn-cyan{background:var(--cyan);color:var(--navy);}.btn-cyan:hover{background:#00d9e8;transform:translateY(-1px);}
+.btn-ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);}.btn-ghost:hover{background:rgba(255,255,255,.2);}
+.btn-outline{background:#fff;color:var(--navy);border:1.5px solid var(--border);}.btn-outline:hover{border-color:var(--cyan);}
+.btn-danger{background:var(--red-lt);color:var(--red);border:1.5px solid #fca5a5;}.btn-danger:hover{background:#fee2e2;}
+.btn-sm{padding:6px 12px;font-size:11px;border-radius:7px;}
+.date-nav{background:#fff;border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.view-btns{display:flex;gap:4px;}
+.view-btn{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--gray);transition:all .15s;}
+.view-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.nav-arrows{display:flex;align-items:center;gap:6px;}
+.arrow-btn{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .13s;}
+.arrow-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.current-label{font-size:13px;font-weight:700;min-width:200px;text-align:center;color:var(--navy);}
+.today-btn{padding:5px 12px;border-radius:7px;border:1.5px solid var(--border);background:#fff;font-size:11px;font-weight:600;cursor:pointer;color:var(--gray);transition:all .13s;}
+.today-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.stats-bar{padding:12px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border);background:#fff;}
+.stat-pill{background:var(--gray-lt);border-radius:8px;padding:8px 14px;display:flex;align-items:center;gap:8px;}
+.stat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.stat-num{font-size:20px;font-weight:800;line-height:1;}
+.stat-lbl{font-size:10px;color:var(--gray);font-weight:500;}
+.stats-actions{margin-left:auto;display:flex;gap:8px;}
+.search-wrap{position:relative;}
+.search-wrap input{background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:7px 12px 7px 34px;font-size:12px;width:200px;color:var(--navy);outline:none;transition:border-color .15s;}
+.search-wrap input:focus{border-color:var(--cyan);}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--gray);}
+.os-grid{padding:20px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.os-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.os-head{background:linear-gradient(135deg,var(--navy),var(--navy-lt));padding:14px 18px;color:#fff;display:flex;align-items:center;justify-content:space-between;}
+.os-head-left{display:flex;align-items:center;gap:10px;}
+.os-emoji{font-size:22px;}
+.os-name{font-size:14px;font-weight:700;}
+.os-count-badge{background:var(--cyan);color:var(--navy);font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.os-mini-stats{padding:8px 18px;background:rgba(26,46,74,.04);display:flex;gap:12px;font-size:11px;font-weight:600;border-bottom:1px solid var(--border);}
+.ms{display:flex;align-items:center;gap:4px;}
+.desk-area{padding:14px;}
+.desk-section-label{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--gray);text-transform:uppercase;padding:6px 0 4px;border-top:1px dashed var(--border);margin-top:6px;}
+.desk-section-label:first-child{border-top:none;margin-top:0;}
+.desk-card{border:1.5px solid var(--border);border-radius:9px;padding:9px 12px;margin-bottom:5px;display:flex;align-items:center;gap:9px;transition:all .17s;background:#fff;}
+.desk-card.occupied{border-color:#86efac;background:#f0fdf4;}
+.desk-card.empty{border-style:dashed;opacity:.75;}
+.desk-card.clickable{cursor:pointer;}
+.desk-card.clickable:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);border-color:var(--cyan);}
+.desk-badge{min-width:36px;height:28px;border-radius:7px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--gray-lt);color:var(--gray);}
+.desk-badge.fixed{background:var(--purple-lt);color:var(--purple);}
+.desk-info{flex:1;min-width:0;}
+.desk-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.desk-person{font-size:11px;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.desk-person.has-person{color:var(--navy);font-weight:500;}
+.desk-clear{width:24px;height:24px;border-radius:6px;border:none;background:var(--red-lt);color:var(--red);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .13s;}
+.desk-clear:hover{background:var(--red);color:#fff;}
+.status-btns{display:flex;gap:3px;flex-shrink:0;}
+.sbtn{width:26px;height:26px;border-radius:6px;border:1.5px solid transparent;background:var(--gray-lt);display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;transition:all .13s;}
+.sbtn:hover{transform:scale(1.2);}
+.sbtn.on-present{background:var(--green);border-color:#16a34a;}
+.sbtn.on-remote{background:var(--orange);border-color:#ea580c;}
+.sbtn.on-absent{background:var(--red);border-color:#dc2626;}
+.sbtn.on-travel{background:#7c3aed;border-color:#5b21b6;}
+.manager-slot{border:1.5px dashed #c4b5fd;border-radius:9px;padding:9px 12px;margin-bottom:5px;display:flex;align-items:center;gap:9px;background:#faf5ff;cursor:pointer;transition:all .17s;}
+.manager-slot:hover{border-color:#7c3aed;box-shadow:var(--shadow-md);}
+.manager-slot.taken{border-style:solid;border-color:#a78bfa;background:#ede9fe;}
+.slot-badge{min-width:36px;height:28px;border-radius:7px;background:var(--purple-lt);color:var(--purple);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.slot-info{flex:1;min-width:0;}
+.slot-label{font-size:12px;font-weight:700;color:var(--purple);}
+.slot-person{font-size:11px;color:var(--gray);}
+.slot-person.taken{color:var(--purple);font-weight:500;}
+.cal-wrap{padding:20px 24px;}
+.week-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.cal-header{font-size:10px;font-weight:700;text-align:center;color:var(--gray);text-transform:uppercase;letter-spacing:1px;padding:6px 0;}
+.cal-day{background:#fff;border-radius:9px;border:1.5px solid var(--border);padding:10px;cursor:pointer;transition:all .17px;min-height:80px;}
+.cal-day:hover{border-color:var(--cyan);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.cal-day.today{border-color:var(--cyan);background:var(--cyan-lt);}
+.cal-day.weekend{background:var(--gray-lt);cursor:default;opacity:.4;}
+.cal-day.weekend:hover{transform:none;box-shadow:none;border-color:var(--border);}
+.cal-day.other-month{opacity:.3;}
+.cal-day-num{font-size:13px;font-weight:700;margin-bottom:6px;}
+.cal-day.today .cal-day-num{color:var(--cyan);}
+.cal-badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;background:var(--green-lt);color:#15803d;}
+.week-day-card{background:#fff;border-radius:9px;border:1.5px solid var(--border);overflow:hidden;cursor:pointer;transition:all .17s;}
+.week-day-card:hover{border-color:var(--cyan);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.week-day-card.today{border-color:var(--cyan);}
+.week-day-head{background:var(--gray-lt);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;}
+.week-day-card.today .week-day-head{background:var(--cyan-lt);}
+.week-day-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray);}
+.week-day-num{font-size:18px;font-weight:800;}
+.week-day-card.today .week-day-num{color:var(--cyan);}
+.week-day-body{padding:10px 12px;}
+.week-os-row{display:flex;align-items:center;justify-content:space-between;padding:3px 0;font-size:11px;}
+.week-os-name{color:var(--gray);}.week-os-count{font-weight:700;color:var(--green);}
+.page-toolbar{background:#fff;border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.page-toolbar h2{font-size:15px;font-weight:700;}
+.planning-table-wrap{padding:20px 24px;overflow-x:auto;}
+table.planning{border-collapse:collapse;width:100%;min-width:600px;}
+table.planning th{background:var(--navy);color:#fff;font-size:11px;font-weight:600;padding:10px;text-align:left;white-space:nowrap;}
+table.planning th:first-child{border-radius:8px 0 0 0;}table.planning th:last-child{border-radius:0 8px 0 0;}
+table.planning td{padding:8px 10px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+table.planning tr:hover td{background:#f8fafc;}
+table.planning tr:nth-child(even) td{background:#fafbfc;}
+.pname{font-weight:600;font-size:12px;}.prole{font-size:10px;color:var(--gray);}
+.pcell{text-align:center;}
+.pill-p{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:var(--green-lt);color:#15803d;}
+.pill-r{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:var(--orange-lt);color:#c2410c;}
+.pill-a{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:var(--red-lt);color:#b91c1c;}
+.pill-n{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;color:var(--gray);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,40,.55);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:16px;width:460px;max-width:95vw;box-shadow:0 24px 64px rgba(10,20,40,.3);overflow:hidden;animation:su .22s ease;}
+@keyframes su{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-head{background:linear-gradient(135deg,var(--navy),var(--navy-lt));padding:18px 22px;color:#fff;display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-x{background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.modal-x:hover{background:rgba(255,255,255,.25);}
+.modal-body{padding:22px;}
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:32px 20px;text-align:center;cursor:pointer;background:var(--gray-lt);transition:all .17s;}
+.upload-zone:hover,.upload-zone.dz{border-color:var(--cyan);background:var(--cyan-lt);}
+.upload-zone .ui{font-size:36px;margin-bottom:8px;}
+.upload-zone h3{font-size:13px;font-weight:600;margin-bottom:4px;}
+.upload-zone p{font-size:11px;color:var(--gray);}
+.tmpl-info{background:#f0f9ff;border:1px solid #bae6fd;border-radius:9px;padding:12px 14px;margin-top:14px;font-size:11px;line-height:1.6;}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
+.deskmodal-list{max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;}
+.deskmodal-row{padding:9px 14px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.deskmodal-row:hover{background:var(--cyan-lt);}.deskmodal-row.current{background:#e0f7fa;}.deskmodal-row.taken{opacity:.4;cursor:default;}
+.md-day-btn{padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:700;cursor:pointer;color:var(--gray);transition:all .15s;}
+.md-day-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.mmd-status-btn{padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray);transition:all .15s;}
+.mmd-status-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--navy);color:#fff;padding:12px 18px;border-radius:10px;font-size:12px;font-weight:500;box-shadow:0 8px 24px rgba(10,20,40,.3);transform:translateY(16px);opacity:0;transition:all .28s;display:flex;align-items:center;gap:8px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.kpi-card{background:#fff;border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--gray);text-transform:uppercase;margin-bottom:8px;}
+.kpi-num{font-size:28px;font-weight:800;line-height:1;}
+.kpi-sub{font-size:11px;color:var(--gray);margin-top:3px;}
+@media(max-width:900px){.os-grid{grid-template-columns:1fr;}.week-grid{grid-template-columns:1fr;}.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-icon">🏢</div>
+    <div><div class="nav-title">Présences Agence</div><div class="nav-sub">3 open spaces</div></div>
+  </div>
+  <div class="nav-right">
+    <button class="btn btn-ghost" onclick="openModal('importModal')" style="font-size:11px">📥 Import Excel</button>
+  </div>
+</nav>
+
+<div class="tabs">
+  <div class="tab active"  id="tab-presences"   onclick="showPage('presences',this)">🗓 Présences</div>
+  <div class="tab"         id="tab-consultants"  onclick="showPage('consultants',this)">📊 Analyse Consultants</div>
+  <div class="tab"         id="tab-managers"     onclick="showPage('managers',this)">📊 Analyse Managers</div>
+  <div class="tab"         id="tab-stats"        onclick="showPage('stats',this)">📈 Statistiques</div>
+  <div class="tab"         id="tab-gestion"      onclick="showPage('gestion',this)">⚙️ Gestion</div>
+</div>
+
+<!-- ══════════════ PAGE PRÉSENCES ══════════════ -->
+<div id="page-presences">
+  <div class="date-nav">
+    <div class="view-btns">
+      <button class="view-btn active" onclick="setView('day',this)">Jour</button>
+      <button class="view-btn" onclick="setView('week',this)">Semaine</button>
+      <button class="view-btn" onclick="setView('month',this)">Mois</button>
+    </div>
+    <div class="nav-arrows">
+      <button class="arrow-btn" onclick="navDate(-1)">◀</button>
+      <div class="current-label" id="currentLabel"></div>
+      <button class="arrow-btn" onclick="navDate(1)">▶</button>
+    </div>
+    <button class="today-btn" onclick="goToday()">Aujourd'hui</button>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-pill"><div class="stat-dot" style="background:#94a3b8"></div><div class="stat-num" id="sTotal">0</div><div class="stat-lbl">Total présents</div></div>
+    <div class="stat-pill"><div class="stat-dot" style="background:#0891b2"></div><div class="stat-num" id="sSynergie">0</div><div class="stat-lbl">Synergie</div></div>
+    <div class="stat-pill"><div class="stat-dot" style="background:#16a34a"></div><div class="stat-num" id="sConfort">0</div><div class="stat-lbl">Confort</div></div>
+    <div class="stat-pill"><div class="stat-dot" style="background:#7c3aed"></div><div class="stat-num" id="sManager">0</div><div class="stat-lbl">Manager</div></div>
+    <div class="stats-actions">
+      <div class="search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Rechercher…" oninput="renderView()">
+      </div>
+    </div>
+  </div>
+  <div id="viewContent"></div>
+</div>
+
+<!-- ══════════════ PAGE ANALYSE CONSULTANTS ══════════════ -->
+<div id="page-consultants" style="display:none">
+  <div class="page-toolbar">
+    <h2>📊 Analyse Consultants</h2>
+    <div class="view-btns">
+      <button class="view-btn active" onclick="setPlanPeriod('week',this,'consultants')">Semaine</button>
+      <button class="view-btn" onclick="setPlanPeriod('month',this,'consultants')">Mois</button>
+    </div>
+    <div class="nav-arrows">
+      <button class="arrow-btn" onclick="navPlan(-1,'consultants')">◀</button>
+      <div class="current-label" id="planLabelConsultants" style="min-width:180px"></div>
+      <button class="arrow-btn" onclick="navPlan(1,'consultants')">▶</button>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="exportCSV('consultants')" style="margin-left:auto">⬇ Export CSV</button>
+  </div>
+  <div class="planning-table-wrap"><table class="planning" id="planTableConsultants"></table></div>
+</div>
+
+<!-- ══════════════ PAGE ANALYSE MANAGERS ══════════════ -->
+<div id="page-managers" style="display:none">
+  <div class="page-toolbar">
+    <h2>📊 Analyse Managers</h2>
+    <div class="view-btns">
+      <button class="view-btn active" onclick="setPlanPeriod('week',this,'managers')">Semaine</button>
+      <button class="view-btn" onclick="setPlanPeriod('month',this,'managers')">Mois</button>
+    </div>
+    <div class="nav-arrows">
+      <button class="arrow-btn" onclick="navPlan(-1,'managers')">◀</button>
+      <div class="current-label" id="planLabelManagers" style="min-width:180px"></div>
+      <button class="arrow-btn" onclick="navPlan(1,'managers')">▶</button>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="exportCSV('managers')" style="margin-left:auto">⬇ Export CSV</button>
+  </div>
+  <div class="planning-table-wrap"><table class="planning" id="planTableManagers"></table></div>
+</div>
+
+<!-- ══════════════ PAGE STATISTIQUES ══════════════ -->
+<div id="page-stats" style="display:none">
+  <div class="page-toolbar">
+    <h2>📈 Statistiques Consultants</h2>
+    <div class="view-btns">
+      <button class="view-btn active" onclick="setStatPeriod('week',this)">Semaine</button>
+      <button class="view-btn" onclick="setStatPeriod('month',this)">Mois</button>
+      <button class="view-btn" onclick="setStatPeriod('all',this)">Tout</button>
+    </div>
+    <div class="nav-arrows" id="statNavRow">
+      <button class="arrow-btn" onclick="navStat(-1)">◀</button>
+      <div class="current-label" id="statLabel" style="min-width:180px"></div>
+      <button class="arrow-btn" onclick="navStat(1)">▶</button>
+    </div>
+  </div>
+  <div style="padding:20px 24px" id="statsContent"></div>
+</div>
+
+<!-- ══════════════ PAGE GESTION ══════════════ -->
+<div id="page-gestion" style="display:none">
+  <div class="page-toolbar">
+    <h2>⚙️ Gestion</h2>
+    <div style="font-size:12px;color:var(--gray);margin-left:8px">Consultants · Réinitialisation · Jours fermés</div>
+  </div>
+  <div style="padding:20px 24px;display:flex;flex-direction:column;gap:20px">
+
+    <!-- RÉINITIALISATION D'UN JOUR -->
+    <div style="background:#fff;border-radius:10px;box-shadow:var(--shadow);overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+        <span style="font-size:15px">🔄</span>
+        <span style="font-weight:700;font-size:14px">Réinitialiser les présences d'un jour</span>
+      </div>
+      <div style="padding:16px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:5px;font-weight:600">Choisir un jour</div>
+          <input type="date" id="resetDayPicker"
+            style="padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;color:var(--navy);outline:none;font-family:inherit">
+        </div>
+        <div style="font-size:12px;color:var(--gray);max-width:300px;line-height:1.5">
+          Efface toutes les présences enregistrées ce jour-là.<br>
+          <em>Les managers attitrés sont conservés, seuls les statuts et réservations sont effacés.</em>
+        </div>
+        <button class="btn btn-danger" style="margin-left:auto" onclick="openResetDayFromGestion()">🔄 Réinitialiser ce jour</button>
+      </div>
+    </div>
+
+    <!-- FERMETURE AGENCE -->
+    <div style="background:#fff;border-radius:10px;box-shadow:var(--shadow);overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+        <span style="font-size:15px">🔒</span>
+        <span style="font-weight:700;font-size:14px">Fermer l'agence un jour</span>
+      </div>
+      <div style="padding:16px 18px;display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:10px;min-width:220px">
+          <div>
+            <div style="font-size:11px;color:var(--gray);margin-bottom:5px;font-weight:600">Jour à fermer</div>
+            <input type="date" id="closeDayPicker"
+              style="padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;color:var(--navy);outline:none;font-family:inherit;width:100%">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--gray);margin-bottom:5px;font-weight:600">Motif <span style="font-weight:400">(optionnel)</span></div>
+            <input type="text" id="closeDayReasonGestion" placeholder="ex : Pont, RTT collectif…"
+              style="padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;color:var(--navy);outline:none;font-family:inherit;width:100%"
+              onkeydown="if(event.key==='Enter')closeDayFromGestion()">
+          </div>
+          <button class="btn" style="background:#c2410c;color:#fff;width:100%" onclick="closeDayFromGestion()">🔒 Fermer ce jour</button>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:11px;color:var(--gray);font-weight:600;margin-bottom:8px">JOURS FERMÉS ENREGISTRÉS</div>
+          <div id="closedDaysList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FERMETURE BUREAU / OPEN SPACE -->
+    <div style="background:#fff;border-radius:10px;box-shadow:var(--shadow);overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+        <span style="font-size:15px">🪑</span>
+        <span style="font-weight:700;font-size:14px">Fermer un bureau ou un open space un jour</span>
+      </div>
+      <div style="padding:16px 18px;display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:10px;min-width:220px">
+          <div>
+            <div style="font-size:11px;color:var(--gray);margin-bottom:5px;font-weight:600">Jour</div>
+            <input type="date" id="closeDeskDayPicker"
+              style="padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;color:var(--navy);outline:none;font-family:inherit;width:100%">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--gray);margin-bottom:5px;font-weight:600">Open Space ou Bureau</div>
+            <select id="closeDeskSelect"
+              style="padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;color:var(--navy);outline:none;font-family:inherit;width:100%;background:#fff">
+              <optgroup label="Open Spaces entiers">
+                <option value="os:synergie">🔵 Open Space Synergie (entier)</option>
+                <option value="os:confort">🟢 Open Space Confort (entier)</option>
+                <option value="os:manager">🟣 Open Space Manager (entier)</option>
+              </optgroup>
+              <optgroup label="Bureaux Synergie" id="optSynergie"></optgroup>
+              <optgroup label="Bureaux Confort"  id="optConfort"></optgroup>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--gray);margin-bottom:5px;font-weight:600">Motif <span style="font-weight:400">(optionnel)</span></div>
+            <input type="text" id="closeDeskReason" placeholder="ex : Travaux, nettoyage…"
+              style="padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;color:var(--navy);outline:none;font-family:inherit;width:100%">
+          </div>
+          <button class="btn" style="background:#0369a1;color:#fff;width:100%" onclick="closeDeskFromGestion()">🪑 Fermer ce bureau/OS</button>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:11px;color:var(--gray);font-weight:600;margin-bottom:8px">BUREAUX / OS FERMÉS</div>
+          <div id="closedDesksList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIGURATION OPEN SPACE MANAGER -->
+    <div style="background:#fff;border-radius:10px;box-shadow:var(--shadow);overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+        <span style="font-size:15px">🟣</span>
+        <span style="font-weight:700;font-size:14px">Configuration Open Space Manager</span>
+        <span style="font-size:11px;color:var(--gray);margin-left:4px">— bureaux attitrés &amp; slots occasionnels</span>
+      </div>
+      <div style="padding:16px 18px;display:flex;gap:24px;flex-wrap:wrap">
+
+        <!-- Managers attitrés -->
+        <div style="flex:1;min-width:260px">
+          <div style="font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">👔 Managers attitrés (bureaux fixes)</div>
+          <div id="mgrFixedList" style="margin-bottom:10px"></div>
+          <div style="display:flex;gap:6px">
+            <input type="text" id="mgrFixedInput" placeholder="Nom du manager…"
+              style="flex:1;padding:8px 10px;border-radius:8px;border:1.5px solid var(--border);font-size:12px;color:var(--navy);outline:none;font-family:inherit"
+              onkeydown="if(event.key==='Enter')addManagerFixed()">
+            <button class="btn btn-sm btn-cyan" onclick="addManagerFixed()">+ Ajouter</button>
+          </div>
+        </div>
+
+        <!-- Slots occasionnels -->
+        <div style="min-width:200px">
+          <div style="font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">🪑 Slots occasionnels</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <button onclick="adjustManagerSlots(-1)" style="width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--red)" title="Réduire">−</button>
+            <div style="text-align:center;min-width:60px">
+              <div style="font-size:28px;font-weight:800;color:var(--purple)" id="mgrSlotCount">3</div>
+              <div style="font-size:10px;color:var(--gray)">slots</div>
+            </div>
+            <button onclick="adjustManagerSlots(1)" style="width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--green)" title="Ajouter">+</button>
+          </div>
+          <div style="font-size:11px;color:var(--gray);line-height:1.5">Ces slots permettent d'accueillir des managers de passage ou invités.</div>
+        </div>
+
+        <!-- Résumé -->
+        <div style="min-width:160px;background:var(--purple-lt);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;align-self:flex-start">
+          <div style="font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.8px">Total bureaux</div>
+          <div style="font-size:32px;font-weight:800;color:var(--purple)" id="mgrTotalCount">12</div>
+          <div style="font-size:11px;color:#7c3aed" id="mgrSummaryDetail">9 attitrés · 3 slots</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- LÉGENDE + LISTE CONSULTANTS -->
+    <div>
+      <div style="background:#fff;border-radius:10px;padding:14px 18px;margin-bottom:12px;box-shadow:var(--shadow);font-size:12px;display:flex;gap:24px;flex-wrap:wrap">
+        <span>🟢 <strong>Actif</strong> — visible dans la saisie et les analyses</span>
+        <span>🔴 <strong>Supprimé</strong> — masqué des analyses individuelles, données macro conservées</span>
+        <span>⚪ <strong>Inactif</strong> — masqué de la saisie uniquement (import Excel)</span>
+      </div>
+
+      <!-- SEARCH + FILTER -->
+      <div style="background:#fff;border-radius:10px;padding:14px 18px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div class="search-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="gestionSearch" placeholder="Rechercher un consultant…" oninput="renderGestion()" style="width:220px">
+        </div>
+        <div class="view-btns">
+          <button class="view-btn active" id="gFiltAll"      onclick="setGestionFilter('all',this)">Tous</button>
+          <button class="view-btn"        id="gFiltActive"   onclick="setGestionFilter('active',this)">Actifs</button>
+          <button class="view-btn"        id="gFiltInactive" onclick="setGestionFilter('inactive',this)">Inactifs</button>
+          <button class="view-btn"        id="gFiltDel"      onclick="setGestionFilter('deleted',this)">Supprimés</button>
+        </div>
+        <div style="margin-left:auto;font-size:12px;color:var(--gray)" id="gestionCount"></div>
+      </div>
+
+      <!-- LIST -->
+      <div id="gestionList" style="background:#fff;border-radius:10px;box-shadow:var(--shadow);overflow:hidden"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODALS ══════════════ -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">📥 Importer la liste du personnel</div><button class="modal-x" onclick="closeModal('importModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
+        ondragover="event.preventDefault();this.classList.add('dz')" ondragleave="this.classList.remove('dz')" ondrop="handleDrop(event)">
+        <div class="ui">📊</div><h3>Glisser-déposer votre fichier Excel</h3><p>ou cliquer · .xlsx / .xls</p>
+      </div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none" onchange="handleFile(this.files[0])">
+      <div class="tmpl-info"><strong>Format attendu :</strong> même structure que le Template fourni<br>Onglets : Open Space Synergie · Open Space Confort · Open Space Manager · Nom des consultants · Nom des managers</div>
+      <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal('importModal')">Fermer</button></div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="closeDayModal">
+  <div class="modal">
+    <div class="modal-head" style="background:linear-gradient(135deg,#7c2d12,#c2410c)">
+      <div class="modal-title" id="closeDayModalTitle">🔒 Fermer l'agence ce jour</div>
+      <button class="modal-x" onclick="closeModal('closeDayModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;line-height:1.7;margin-bottom:14px" id="closeDayModalDesc"></p>
+      <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">Motif <span style="color:var(--gray);font-weight:400">(optionnel)</span></label>
+      <input type="text" id="closeDayReason" placeholder="ex : Pont, Formation, RTT collectif…"
+        style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;outline:none;color:var(--navy);transition:border-color .15s"
+        onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--border)'"
+        onkeydown="if(event.key==='Enter')confirmCloseDay()">
+      <p style="font-size:11px;color:var(--gray);margin-top:10px;line-height:1.5">⚠️ Ce jour sera <strong>exclu des statistiques</strong> et la saisie de présences sera désactivée.</p>
+      <div class="modal-foot">
+        <button class="btn btn-outline" onclick="closeModal('closeDayModal')">Annuler</button>
+        <button class="btn" style="background:#c2410c;color:#fff" onclick="confirmCloseDay()">🔒 Fermer ce jour</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="resetDayModal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">🔄 Réinitialiser un jour</div><button class="modal-x" onclick="closeModal('resetDayModal')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:13px;line-height:1.7;margin-bottom:6px">Effacer toutes les présences du <strong id="resetDayLabel"></strong> ?</p>
+      <p style="font-size:11px;color:var(--gray);margin-bottom:18px">Les managers attitrés sont conservés, seuls les statuts et réservations de bureaux sont supprimés.</p>
+      <div class="modal-foot">
+        <button class="btn btn-outline" onclick="closeModal('resetDayModal')">Annuler</button>
+        <button class="btn btn-danger" id="resetDayConfirmBtn">🔄 Réinitialiser</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">🗑 Supprimer des analyses</div><button class="modal-x" onclick="closeModal('deleteModal')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:13px;line-height:1.7;margin-bottom:6px">Supprimer <strong id="deleteModalName"></strong> des analyses individuelles ?</p>
+      <p style="font-size:11px;color:var(--gray);margin-bottom:18px">Les données macro (taux de remplissage, évolution globale) restent intactes. Cette action est réversible depuis l'onglet Gestion.</p>
+      <div class="modal-foot">
+        <button class="btn btn-outline" onclick="closeModal('deleteModal')">Annuler</button>
+        <button class="btn btn-danger" id="deleteModalBtn" onclick="">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="resetModal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">🔄 Réinitialiser les présences</div><button class="modal-x" onclick="closeModal('resetModal')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:13px;line-height:1.7;margin-bottom:18px">Toutes les présences de <strong id="resetDateLabel"></strong> seront effacées.</p>
+      <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal('resetModal')">Annuler</button><button class="btn btn-danger" onclick="resetDay()">Réinitialiser</button></div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="deskModal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="deskModalTitle">Choisir un consultant</div><button class="modal-x" onclick="closeModal('deskModal')">✕</button></div>
+    <div class="modal-body">
+      <input type="text" id="deskSearch" placeholder="Rechercher…" oninput="filterDeskList()" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;margin-bottom:10px;outline:none">
+      <div class="deskmodal-list" id="deskList"></div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" onclick="closeModal('deskModal')">Annuler</button>
+        <button class="btn btn-sm" style="background:#ede9fe;color:#5b21b6;border:1.5px solid #c4b5fd" onclick="openMultiDayModal()">📅 Réserver plusieurs jours</button>
+        <button class="btn btn-danger btn-sm" onclick="clearDesk()">🗑 Libérer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MANAGER MULTI-DAY MODAL -->
+<div class="modal-overlay" id="mgrMultiDayModal">
+  <div class="modal" style="width:500px">
+    <div class="modal-head">
+      <div class="modal-title">📅 Planning multi-jours — <span id="mmdPersonLabel"></span></div>
+      <button class="modal-x" onclick="closeModal('mgrMultiDayModal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px 22px">
+
+      <!-- Statut -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">① Statut à appliquer</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="mmd-status-btn active" data-status="present" onclick="selectMmdStatus(this)">✅ Présent</button>
+          <button class="mmd-status-btn" data-status="remote" onclick="selectMmdStatus(this)">🏠 Télétravail</button>
+          <button class="mmd-status-btn" data-status="travel" onclick="selectMmdStatus(this)">✈️ Déplacement</button>
+          <button class="mmd-status-btn" data-status="absent" onclick="selectMmdStatus(this)">❌ Absent</button>
+        </div>
+      </div>
+
+      <!-- Jours -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">② Jours de la semaine</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="md-day-btn mmd-day-btn" data-day="1" onclick="toggleMdDay(this)">Lun</button>
+          <button class="md-day-btn mmd-day-btn" data-day="2" onclick="toggleMdDay(this)">Mar</button>
+          <button class="md-day-btn mmd-day-btn" data-day="3" onclick="toggleMdDay(this)">Mer</button>
+          <button class="md-day-btn mmd-day-btn" data-day="4" onclick="toggleMdDay(this)">Jeu</button>
+          <button class="md-day-btn mmd-day-btn" data-day="5" onclick="toggleMdDay(this)">Ven</button>
+        </div>
+      </div>
+
+      <!-- Période -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">③ Période</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:11px;color:var(--gray);margin-bottom:4px">À partir du</div>
+            <input type="date" id="mmdStartDate" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);font-size:12px;outline:none;font-family:inherit">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--gray);margin-bottom:4px">Nombre de semaines</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button onclick="changeMmdWeeks(-1)" style="width:28px;height:28px;border-radius:7px;border:1.5px solid var(--border);background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+              <span id="mmdWeeksNum" style="font-size:18px;font-weight:800;min-width:24px;text-align:center">4</span>
+              <button onclick="changeMmdWeeks(1)" style="width:28px;height:28px;border-radius:7px;border:1.5px solid var(--border);background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div style="background:var(--gray-lt);border-radius:9px;padding:10px 14px;font-size:11px;color:var(--gray);min-height:32px" id="mmdPreview">
+        Sélectionnez un statut, des jours et une période.
+      </div>
+
+      <div class="modal-foot" style="margin-top:14px">
+        <button class="btn btn-outline" onclick="closeModal('mgrMultiDayModal')">Annuler</button>
+        <button class="btn btn-cyan" onclick="confirmMgrMultiDay()">✅ Confirmer</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="multiDayModal">
+  <div class="modal" style="width:540px">
+    <div class="modal-head">
+      <div class="modal-title">📅 Réservation multi-jours — <span id="mdDeskLabel"></span></div>
+      <button class="modal-x" onclick="closeModal('multiDayModal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px 22px">
+
+      <!-- STEP 1: Personne -->
+      <div id="mdStep1">
+        <div style="font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">① Choisir la personne</div>
+        <input type="text" id="mdPersonSearch" placeholder="Rechercher un consultant…" oninput="filterMdPersonList()"
+          style="width:100%;padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;margin-bottom:8px;outline:none;font-family:inherit">
+        <div id="mdPersonList" style="max-height:160px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;margin-bottom:16px"></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:var(--gray-lt);font-size:12px" id="mdSelectedPersonRow" style="display:none">
+          <span>👤</span><strong id="mdSelectedPersonName" style="flex:1">Aucune personne sélectionnée</strong>
+          <button class="btn btn-sm btn-outline" onclick="clearMdPerson()" style="font-size:10px">✕</button>
+        </div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0">
+
+      <!-- STEP 2: Jours de la semaine -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">② Jours de la semaine</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <button class="md-day-btn" data-day="1" onclick="toggleMdDay(this)">Lun</button>
+          <button class="md-day-btn" data-day="2" onclick="toggleMdDay(this)">Mar</button>
+          <button class="md-day-btn" data-day="3" onclick="toggleMdDay(this)">Mer</button>
+          <button class="md-day-btn" data-day="4" onclick="toggleMdDay(this)">Jeu</button>
+          <button class="md-day-btn" data-day="5" onclick="toggleMdDay(this)">Ven</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Période -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">③ Période</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+          <div>
+            <div style="font-size:11px;color:var(--gray);margin-bottom:4px">À partir du</div>
+            <input type="date" id="mdStartDate" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);font-size:12px;outline:none;font-family:inherit">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--gray);margin-bottom:4px">Nombre de semaines</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button onclick="changeMdWeeks(-1)" style="width:28px;height:28px;border-radius:7px;border:1.5px solid var(--border);background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+              <span id="mdWeeksNum" style="font-size:18px;font-weight:800;min-width:24px;text-align:center">4</span>
+              <button onclick="changeMdWeeks(1)" style="width:28px;height:28px;border-radius:7px;border:1.5px solid var(--border);background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PREVIEW -->
+      <div style="background:var(--gray-lt);border-radius:9px;padding:10px 14px;font-size:11px;color:var(--gray);min-height:32px" id="mdPreview">
+        Sélectionnez une personne, des jours et une période pour voir l'aperçu.
+      </div>
+
+      <div class="modal-foot" style="margin-top:14px">
+        <button class="btn btn-outline" onclick="closeModal('multiDayModal')">Annuler</button>
+        <button class="btn btn-cyan" onclick="confirmMultiDay()">✅ Confirmer les réservations</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="slotModal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="slotModalTitle">Assigner un manager</div><button class="modal-x" onclick="closeModal('slotModal')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--gray);margin-bottom:12px">Sélectionnez le manager :</p>
+      <select id="slotSelect" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;color:var(--navy);outline:none;margin-bottom:14px"><option value="">— Libre —</option></select>
+      <div id="slotStatusRow"></div>
+      <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal('slotModal')">Annuler</button><button class="btn btn-cyan" onclick="confirmSlot()">Confirmer</button></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
+
+<script>
+// ═══════════════════════ DATA ═══════════════════════
+let OPEN_SPACES = [
+  { id:'synergie', name:'Open Space Synergie', emoji:'🔵', type:'consultant',
+    desks:[{id:'S1',label:'S1'},{id:'S2',label:'S2'},{id:'S3',label:'S3'},{id:'S4',label:'S4'},
+           {id:'S5',label:'S5'},{id:'S6',label:'S6'},{id:'S7',label:'S7'},{id:'S8',label:'S8'},{id:'S9',label:'S9'},{id:'S10',label:'S10'}]},
+  { id:'confort', name:'Open Space Confort', emoji:'🟢', type:'consultant',
+    desks:[{id:'C1',label:'C1'},{id:'C2',label:'C2'},{id:'C3',label:'C3'},{id:'C4',label:'C4'},
+           {id:'C5',label:'C5'},{id:'C6',label:'C6'},{id:'C7',label:'C7'},{id:'C8',label:'C8'},
+           {id:'C9',label:'C9'},{id:'C10',label:'C10'},{id:'C11',label:'C11'},{id:'C12',label:'C12'}]},
+  { id:'manager', name:'Open Space Manager', emoji:'🟣', type:'manager',
+    desks:[
+      {id:'M-Victoire',label:'Victoire',fixedPerson:'Victoire',type:'manager-fixed'},
+      {id:'M-Benjamin',label:'Benjamin',fixedPerson:'Benjamin',type:'manager-fixed'},
+      {id:'M-Terry',label:'Terry',fixedPerson:'Terry',type:'manager-fixed'},
+      {id:'M-Médina',label:'Médina',fixedPerson:'Médina',type:'manager-fixed'},
+      {id:'M-Julien',label:'Julien',fixedPerson:'Julien',type:'manager-fixed'},
+      {id:'M-Léopold',label:'Léopold',fixedPerson:'Léopold',type:'manager-fixed'},
+      {id:'M-Célestine',label:'Célestine',fixedPerson:'Célestine',type:'manager-fixed'},
+      {id:'M-Clarisse',label:'Clarisse',fixedPerson:'Clarisse',type:'manager-fixed'},
+      {id:'M-Célia',label:'Célia',fixedPerson:'Célia',type:'manager-fixed'},
+      {id:'Manager1',label:'Manager 1',fixedPerson:null,type:'manager-slot'},
+      {id:'Manager2',label:'Manager 2',fixedPerson:null,type:'manager-slot'},
+      {id:'Manager3',label:'Manager 3',fixedPerson:null,type:'manager-slot'},
+    ]}
+];
+let CONSULTANTS = [
+  {name:'Adel AL TINAWI',active:true},{name:'Alexia RENOUD',active:true},{name:'Alice KOECHLIN',active:true},
+  {name:'Alizea BRAM',active:true},{name:'Anais KAWCZYNSKI',active:true},{name:'Angelina TROGI',active:true},
+  {name:'Anna ZERDOUG',active:true},{name:'Anne DONCHE',active:true},{name:'Asma BENKHALFALLAH',active:true},
+  {name:'Aurore MAGNY',active:true},{name:'Bastien LESNE',active:true},{name:'Camille JACQUINOT',active:true},
+  {name:'Charlene COUTENTIN',active:true},{name:'Charlotte ANTONY',active:true},{name:'Chloe PEUBEZ',active:true},
+  {name:'Christelle LEPICIER',active:true},{name:'Cindy TROTEREAU',active:true},{name:'Claire KERVELLA',active:true},
+  {name:'Clarisse GERAUL',active:true},{name:'Clemence SABLAYROLLES',active:true},{name:'Coralie MOREL',active:true},
+  {name:'Cynthia ALLAIRE',active:true},{name:'Dorothee LANDAIS',active:true},{name:'Dounya BOUDEBOUZE',active:true},
+  {name:'Elodie SERRANO',active:true},{name:'Emilie BRUNEL',active:true},{name:'Estelle DUBOIS',active:true},
+  {name:'Felix COLLET',active:true},{name:'Florence LOMBARDO',active:true},{name:'Gaelle CESARACCIO',active:true},
+  {name:'Géraldina MERKOQI',active:true},{name:'Hadi KABALANE',active:true},{name:'Helene TONOLI',active:true},
+  {name:'Imane EL ATMANI',active:true},{name:'Imen BEN NJIMA',active:true},{name:'Jules MORSCH',active:true},
+  {name:'Julie CHAUMET',active:true},{name:'Julie LECLERCQ',active:true},{name:'Julien ORTEGA',active:true},
+  {name:'Karine BRIGANDAT',active:true},{name:'Kassandra LEBOUCHER',active:true},{name:'Laura LEBON',active:true},
+  {name:'Lea GUILLERY',active:true},{name:'Lionel ALVES',active:true},{name:'Louise DAUBIE',active:true},
+  {name:'Ludivine GOUSSI',active:true},{name:'Marie MARCOS',active:true},{name:'Mathieu ADELLI',active:true},
+  {name:'Mayssem GUISSOUMA',active:true},{name:'Mélanie BELIN',active:true},{name:'Mélanie BOULONNE',active:true},
+  {name:'Melanie PARAS',active:true},{name:'Nicolas BAFFERT',active:true},{name:'Nicolas BAILLET',active:true},
+  {name:'Paul PICQ',active:true},{name:'Pauline DOUFFET',active:true},{name:'Perrine ANDRE',active:true},
+  {name:'Pierre ELIOT',active:true},{name:'Samuel GRIOLET',active:true},{name:'Sara HILMI',active:true},
+  {name:'Sara Sabrina ZERTAL',active:true},{name:'Seijdi LUSHO',active:true},{name:'Stéphane CHIRON',active:true},
+  {name:'Stephane KNORR',active:true},{name:'Tanguy DEMEAUTIS',active:true},{name:'Teddy CHAIX',active:true},
+  {name:'Thanh Tung (Antoine) NGUYEN',active:true},{name:'Thi Thuy Hang PHAN',active:true},
+  {name:'Thomas CARTON',active:true},{name:'Timothee BOIS',active:true},{name:'Vanessa CALLE',active:true},
+  {name:'Yoann BLANGERO',active:true},{name:'Youness OULHA',active:true}
+];
+let MANAGERS = ['Karine Ligonniere','Laurie Fergeault-Ricochon','Sandrine Brette','Sandrine Grazzini','Stéphane Thérèse','Invité 1','Invité 2','Invité 3'];
+
+// ═══════════════════════ HELPERS ═══════════════════════
+function shortName(name) {
+  if(!name) return '';
+  const parts = name.trim().split(/\s+/);
+  if(parts.length===1) return name;
+  return parts[0]+' '+parts[parts.length-1][0].toUpperCase()+'.';
+}
+
+// Consultant helpers
+function activeConsultantNames() { return CONSULTANTS.filter(c=>c.active).map(c=>c.name); }
+function allConsultantNames()   { return CONSULTANTS.map(c=>c.name); }
+function isActiveConsultant(name) { const c=CONSULTANTS.find(x=>x.name===name); return c?c.active:false; }
+
+// ── Consultants supprimés des analyses individuelles (pas des stats macro) ──
+// ── Deleted consultants (in-memory + Supabase via meta) ──
+let _deleted = new Set();
+async function loadDeleted() {
+  const rows = await sbGet('meta', 'key=eq.deleted_consultants');
+  if(rows.length) _deleted = new Set(JSON.parse(rows[0].value||'[]'));
+}
+function getDeleted() { return _deleted; }
+function saveDeleted(s) { _deleted = s; sbUpsert('meta', {key:'deleted_consultants', value:JSON.stringify([...s])}); }
+function isDeleted(name){ return getDeleted().has(name); }
+function deleteConsultant(name){
+  const s=getDeleted(); s.add(name); saveDeleted(s);
+  showToast('🗑',`${shortName(name)} supprimé des analyses`);
+  renderGestion();
+  // Re-render current page if relevant
+  if(document.getElementById('page-consultants').style.display!=='none') renderPlan('consultants');
+  if(document.getElementById('page-stats').style.display!=='none') renderStats();
+}
+function restoreConsultant(name){
+  const s=getDeleted(); s.delete(name); saveDeleted(s);
+  showToast('✅',`${shortName(name)} restauré`);
+  renderGestion();
+  if(document.getElementById('page-consultants').style.display!=='none') renderPlan('consultants');
+  if(document.getElementById('page-stats').style.display!=='none') renderStats();
+}
+// Consultants visible in individual analyses (active + not deleted)
+function visibleConsultantNames(){ return activeConsultantNames().filter(n=>!isDeleted(n)); }
+
+// ═══════════════════════ STATE ═══════════════════════
+const REAL_TODAY = (()=>{const d=new Date();const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${dd}`;})();
+let currentDateStr = REAL_TODAY;
+let currentView = 'day';
+let planPeriods = {consultants:'week', managers:'week'};
+let planOffsets = {consultants:0, managers:0};
+let statPeriod = 'week';
+let statOffset = 0;
+let activeDeskId = null;
+let activeSlotId = null;
+
+// ═══════════════════════ STORAGE ═══════════════════════
+// ═══════════════════════ SUPABASE CONFIG ═══════════════════════════
+const SB_URL = 'https://ntknnnrfhscldrirwirrc.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50a25ucmZoc2NsZHJpcndpcnJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNzA2ODIsImV4cCI6MjA5Nzk0NjY4Mn0.g3uk6S6pb65tzgLFuQEJXpddkjKHJ5-tzBh0nOTffJ0';
+const SB_HEADERS = {'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'resolution=merge-duplicates'};
+
+async function sbGet(table, params='') {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?${params}`, {headers:SB_HEADERS});
+  return r.ok ? r.json() : [];
+}
+async function sbUpsert(table, data) {
+  await fetch(`${SB_URL}/rest/v1/${table}`, {method:'POST',headers:SB_HEADERS,body:JSON.stringify(data)});
+}
+async function sbDelete(table, params) {
+  await fetch(`${SB_URL}/rest/v1/${table}?${params}`, {method:'DELETE',headers:SB_HEADERS});
+}
+
+// ── In-memory cache (sync layer) ──
+let _cache = {};       // presences cache: { dateStr: { deskId: {person,status} } }
+let _cacheLoaded = false;
+let _metaLoaded = false;
+
+function getAllData() { return _cache; }
+function getDayData(ds) { return _cache[ds] || {}; }
+
+function saveDayData(ds, data) {
+  _cache[ds] = data;
+  // Async write to Supabase — fire and forget per desk entry
+  Object.entries(data).forEach(([deskId, st]) => {
+    if(st.person || st.status) {
+      sbUpsert('presences', {date_str:ds, desk_id:deskId, person:st.person||null, status:st.status||null});
+    } else {
+      sbDelete('presences', `date_str=eq.${ds}&desk_id=eq.${deskId}`);
+    }
+  });
+}
+
+async function loadAllPresences() {
+  if(_cacheLoaded) return;
+  const rows = await sbGet('presences', 'select=date_str,desk_id,person,status&order=date_str');
+  _cache = {};
+  rows.forEach(r => {
+    if(!_cache[r.date_str]) _cache[r.date_str] = {};
+    _cache[r.date_str][r.desk_id] = {person:r.person, status:r.status};
+  });
+  _cacheLoaded = true;
+}
+
+async function saveMeta() {
+  const val = JSON.stringify({OPEN_SPACES, CONSULTANTS, MANAGERS});
+  await sbUpsert('meta', {key:'config', value:val});
+}
+
+async function loadMeta() {
+  if(_metaLoaded) return;
+  const rows = await sbGet('meta', 'key=eq.config');
+  if(rows.length) {
+    const d = JSON.parse(rows[0].value);
+    OPEN_SPACES = d.OPEN_SPACES;
+    CONSULTANTS = d.CONSULTANTS;
+    MANAGERS = d.MANAGERS;
+  }
+  _metaLoaded = true;
+}
+function getDeskState(ds,id){return getDayData(ds)[id]||{person:null,status:null};}
+function setDeskState(ds,id,person,status){const d=getDayData(ds);d[id]={person,status};saveDayData(ds,d);}
+
+// ═══════════════════════ DATE HELPERS ═══════════════════════
+function parseDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+function fmtISO(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${dd}`;}
+function fmtLong(s){return parseDate(s).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
+function fmtShort(s){return parseDate(s).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});}
+function isToday(s){return s===REAL_TODAY;}
+function isWeekend(d){const x=d.getDay();return x===0||x===6;}
+
+// ── Jours fériés français (fixes + mobiles calculés via l'algorithme de Pâques) ──
+function easterDate(year){
+  // Algorithme de Gauss/Meeus pour calculer Pâques
+  const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4;
+  const f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7;
+  const m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+  return new Date(year,month-1,day);
+}
+function getFrenchHolidays(year){
+  const easter=easterDate(year);
+  const addD=(d,n)=>{const r=new Date(d);r.setDate(r.getDate()+n);return r;};
+  const fixed=[
+    new Date(year,0,1),   // 1er janvier
+    new Date(year,4,1),   // 1er mai
+    new Date(year,4,8),   // 8 mai
+    new Date(year,6,14),  // 14 juillet
+    new Date(year,7,15),  // 15 août
+    new Date(year,10,1),  // 1er novembre
+    new Date(year,10,11), // 11 novembre
+    new Date(year,11,25), // Noël
+  ];
+  const mobile=[
+    addD(easter,1),   // Lundi de Pâques
+    addD(easter,39),  // Ascension
+    addD(easter,50),  // Lundi de Pentecôte
+  ];
+  return [...fixed,...mobile].map(fmtISO);
+}
+let HOLIDAY_CACHE={};
+function isHoliday(ds){
+  const year=parseDate(ds).getFullYear();
+  if(!HOLIDAY_CACHE[year]) HOLIDAY_CACHE[year]=new Set(getFrenchHolidays(year));
+  return HOLIDAY_CACHE[year].has(ds);
+}
+function getHolidayName(ds){
+  const d=parseDate(ds);
+  const names={
+    '01-01':'Jour de l\'an','05-01':'Fête du travail','05-08':'Victoire 1945',
+    '07-14':'Fête nationale','08-15':'Assomption','11-01':'Toussaint',
+    '11-11':'Armistice','12-25':'Noël'
+  };
+  const key=String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  if(names[key]) return names[key];
+  const year=d.getFullYear();const easter=easterDate(year);
+  const addD=(dd,n)=>{const r=new Date(dd);r.setDate(r.getDate()+n);return r;};
+  if(fmtISO(addD(easter,1))===ds) return 'Lundi de Pâques';
+  if(fmtISO(addD(easter,39))===ds) return 'Ascension';
+  if(fmtISO(addD(easter,50))===ds) return 'Lundi de Pentecôte';
+  return 'Jour férié';
+}
+
+// ── Jours de fermeture manuelle (fermeture agence) ──
+// ── Closed days (in-memory + Supabase) ──
+let _closedDays = {}; // { dateStr: reason }
+let _closedDaysLoaded = false;
+
+async function loadClosedDays() {
+  if(_closedDaysLoaded) return;
+  const rows = await sbGet('closed_days', "type=eq.day&select=date_str,reason");
+  _closedDays = {};
+  rows.forEach(r => { _closedDays[r.date_str] = r.reason || 'Agence fermée'; });
+  _closedDaysLoaded = true;
+}
+function getClosedDays() { return _closedDays; }
+function setClosedDay(ds, reason) {
+  _closedDays[ds] = reason || 'Agence fermée';
+  sbUpsert('closed_days', {date_str:ds, reason:_closedDays[ds], type:'day', target_id:'_'});
+}
+function removeClosedDay(ds) {
+  delete _closedDays[ds];
+  sbDelete('closed_days', `date_str=eq.${ds}&type=eq.day`);
+}
+function isClosedDay(ds) { return Object.prototype.hasOwnProperty.call(_closedDays, ds); }
+function getClosedReason(ds) { return _closedDays[ds] || ''; }
+
+// ── Bureaux et open spaces fermés par date ──
+// ── Closed desks (in-memory + Supabase) ──
+let _closedDesks = {}; // { dateStr: { id: reason } }
+let _closedDesksLoaded = false;
+
+async function loadClosedDesks() {
+  if(_closedDesksLoaded) return;
+  const rows = await sbGet('closed_days', "type=neq.day&select=date_str,reason,target_id");
+  _closedDesks = {};
+  rows.forEach(r => {
+    if(!_closedDesks[r.date_str]) _closedDesks[r.date_str] = {};
+    _closedDesks[r.date_str][r.target_id] = r.reason || 'Fermé';
+  });
+  _closedDesksLoaded = true;
+}
+function getClosedDesksData() { return _closedDesks; }
+function saveClosedDesksData(d) { _closedDesks = d; }
+
+function setClosedDesk(ds, id, reason) {
+  if(!_closedDesks[ds]) _closedDesks[ds] = {};
+  _closedDesks[ds][id] = reason || 'Fermé';
+  const isOS = OPEN_SPACES.some(o=>o.id===id);
+  sbUpsert('closed_days', {date_str:ds, reason:_closedDesks[ds][id], type:isOS?'os':'desk', target_id:id});
+}
+function removeClosedDesk(ds, id) {
+  if(_closedDesks[ds]) { delete _closedDesks[ds][id]; if(!Object.keys(_closedDesks[ds]).length) delete _closedDesks[ds]; }
+  sbDelete('closed_days', `date_str=eq.${ds}&target_id=eq.${id}`);
+}
+function isDeskClosed(ds,deskId){
+  const d=getClosedDesksData();
+  return !!(d[ds]&&(d[ds][deskId]!==undefined));
+}
+function isOSClosed(ds,osId){
+  const d=getClosedDesksData();
+  return !!(d[ds]&&(d[ds][osId]!==undefined));
+}
+function getDeskClosedReason(ds,id){
+  const d=getClosedDesksData();
+  return d[ds]&&d[ds][id]?d[ds][id]:'';
+}
+
+// Clean up reservations on closed desks/OS from today onward
+function cleanupClosedDeskReservations(ds,id,isOS){
+  const allData=getAllData();
+  let count=0;
+  Object.keys(allData).forEach(dateStr=>{
+    if(dateStr<REAL_TODAY) return;
+    if(!isDeskClosed(dateStr,id)&&!isOSClosed(dateStr,id)) return;
+    const day=allData[dateStr];let changed=false;
+    if(isOS){
+      const os=OPEN_SPACES.find(o=>o.id===id);
+      if(os) os.desks.forEach(d=>{
+        if(day[d.id]&&day[d.id].person){day[d.id]={person:null,status:null};changed=true;count++;}
+      });
+    } else {
+      if(day[id]&&day[id].person){day[id]={person:null,status:null};changed=true;count++;}
+    }
+    if(changed) allData[dateStr]=day;
+  });
+  // Push cleaned up entries to Supabase
+  Object.keys(allData).forEach(dateStr => {
+    if(dateStr >= REAL_TODAY) {
+      const day = allData[dateStr];
+      Object.entries(day).forEach(([deskId, st]) => {
+        if(!st.person && !st.status) sbDelete('presences', `date_str=eq.${dateStr}&desk_id=eq.${deskId}`);
+      });
+    }
+  });
+  _cache = allData;
+  return count;
+}// A day is excluded from stats & blocked for entry if: weekend OR holiday OR manually closed
+function isNonWorkingDay(ds){
+  return isWeekend(parseDate(ds)) || isHoliday(ds) || isClosedDay(ds);
+}
+function addDays(ds,n){const d=parseDate(ds);d.setDate(d.getDate()+n);return fmtISO(d);}
+function getMondayOfWeek(ds){const d=parseDate(ds);const day=d.getDay()||7;d.setDate(d.getDate()-day+1);return fmtISO(d);}
+function getWeekDays(ds){const mon=getMondayOfWeek(ds);return Array.from({length:5},(_,i)=>addDays(mon,i));}
+function getMonthDays(ds){
+  const d=parseDate(ds);const year=d.getFullYear(),month=d.getMonth();
+  const first=new Date(year,month,1);const startDay=first.getDay()||7;
+  const last=new Date(year,month+1,0);const days=[];
+  for(let i=1-startDay+1;i<=last.getDate();i++){const dd=new Date(year,month,i);days.push({date:fmtISO(dd),inMonth:i>=1});}
+  while(days.length%7!==0){const nxt=addDays(days[days.length-1].date,1);days.push({date:nxt,inMonth:false});}
+  return days;
+}
+function countPresent(ds,osId){
+  const os=OPEN_SPACES.find(o=>o.id===osId);if(!os)return 0;
+  if(isOSClosed(ds,osId)) return 0;
+  const day=getDayData(ds);
+  const desks = osId==='manager' ? getMgrDesksForDate(ds) : getConsDesksForDate(osId,ds);
+  return desks.filter(d=>{
+    if(isDeskClosed(ds,d.id)) return false;
+    const st=day[d.id];
+    if(os.type==='consultant')return st&&st.person;
+    if(d.type==='manager-fixed')return st&&st.status==='present';
+    if(d.type==='manager-slot')return st&&st.person&&st.status==='present';
+    return false;
+  }).length;
+}
+
+// ═══════════════════════ PAGE ROUTING ═══════════════════════
+const PAGES = ['presences','consultants','managers','stats','gestion'];
+function showPage(p, btn) {
+  PAGES.forEach(id => {
+    const el = document.getElementById('page-'+id);
+    if(el) el.style.display = id===p ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  if(p==='consultants') renderPlan('consultants');
+  if(p==='managers')    renderPlan('managers');
+  if(p==='stats')       renderStats();
+  if(p==='gestion')     { renderGestion(); renderClosedDaysList(); renderClosedDesks(); initCloseDeskSelect(); renderManagerConfig(); }
+}
+
+// ═══════════════════════ PRÉSENCES VIEW ═══════════════════════
+function setView(v,btn){
+  currentView=v;
+  document.querySelectorAll('#page-presences .view-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderView();
+}
+function navDate(dir){
+  if(currentView==='day'){
+    let next=addDays(currentDateStr,dir);
+    // Skip weekends in day view — jump straight to the next/previous working weekday
+    while(isWeekend(parseDate(next))) next=addDays(next,dir);
+    currentDateStr=next;
+  }
+  else if(currentView==='week') currentDateStr=addDays(currentDateStr,dir*7);
+  else{const d=parseDate(currentDateStr);d.setMonth(d.getMonth()+dir);currentDateStr=fmtISO(d);}
+  renderView();
+}
+function goToday(){
+  currentDateStr=REAL_TODAY;currentView='day';
+  document.querySelectorAll('#page-presences .view-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  renderView();
+}
+function renderView(){
+  updateDateLabel();
+  updateCloseDayBtn();
+  if(currentView==='day') renderDay(currentDateStr);
+  else if(currentView==='week') renderWeekCal();
+  else renderMonthCal();
+}
+function updateDateLabel(){
+  const el=document.getElementById('currentLabel');
+  if(currentView==='day') el.textContent=fmtLong(currentDateStr);
+  else if(currentView==='week'){
+    const days=getWeekDays(currentDateStr);
+    el.textContent=parseDate(days[0]).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' — '+parseDate(days[4]).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
+  } else {
+    el.textContent=parseDate(currentDateStr).toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  }
+}
+function renderDay(ds){
+  let totS=countPresent(ds,'synergie'),totC=countPresent(ds,'confort'),totM=countPresent(ds,'manager');
+  document.getElementById('sTotal').textContent=totS+totC+totM;
+  document.getElementById('sSynergie').textContent=totS;
+  document.getElementById('sConfort').textContent=totC;
+  document.getElementById('sManager').textContent=totM;
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  const content=document.getElementById('viewContent');
+  content.innerHTML='';
+
+  // Holiday / closed-day banner
+  const holiday = isHoliday(ds);
+  const closed  = isClosedDay(ds);
+  const blocked = holiday || closed;
+  if(blocked){
+    const banner=document.createElement('div');
+    banner.style.cssText='margin:14px 24px 0;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;'+
+      (closed?'background:#fee2e2;border:1.5px solid #fca5a5;color:#b91c1c;':'background:#fef3c7;border:1.5px solid #fbbf24;color:#92400e;');
+    banner.innerHTML = closed
+      ? `🔒 Agence fermée ce jour — ${getClosedReason(ds)}. La saisie est désactivée. Pour rouvrir ce jour, rendez-vous dans l'onglet ⚙️ Gestion.`
+      : `📅 Jour férié — ${getHolidayName(ds)}. La saisie est désactivée.`;
+    content.appendChild(banner);
+  }
+
+  const grid=document.createElement('div');grid.className='os-grid';content.appendChild(grid);
+  OPEN_SPACES.forEach(os=>{
+    const osP=countPresent(ds,os.id);
+    const card=document.createElement('div');card.className='os-card';
+    let mini='';
+    const histDesks = os.type==='manager' ? getMgrDesksForDate(ds) : getConsDesksForDate(os.id,ds);
+    if(os.type==='consultant'){
+      mini=`<span class="ms"><span style="color:var(--green)">✅</span>&nbsp;${osP} présents</span><span class="ms"><span style="color:var(--gray)">🪑</span>&nbsp;${histDesks.length-osP} libres</span>`;
+    } else {
+      const day=getDayData(ds);
+      const pF=histDesks.filter(d=>d.type==='manager-fixed'&&day[d.id]&&day[d.id].status==='present').length;
+      const rF=histDesks.filter(d=>d.type==='manager-fixed'&&day[d.id]&&day[d.id].status==='remote').length;
+      const aF=histDesks.filter(d=>d.type==='manager-fixed'&&day[d.id]&&day[d.id].status==='absent').length;
+      const pS=histDesks.filter(d=>d.type==='manager-slot'&&day[d.id]&&day[d.id].person&&day[d.id].status==='present').length;
+      const rS=histDesks.filter(d=>d.type==='manager-slot'&&day[d.id]&&day[d.id].person&&day[d.id].status==='remote').length;
+      mini=`<span class="ms"><span style="color:var(--green)">✅</span>&nbsp;${pF+pS} bureau</span><span class="ms"><span style="color:var(--orange)">🏠</span>&nbsp;${rF+rS} télétravail</span><span class="ms"><span style="color:var(--red)">❌</span>&nbsp;${aF} absent</span>`;
+    }
+    const osClosed = isOSClosed(ds,os.id);
+    card.innerHTML=`<div class="os-head"><div class="os-head-left"><div class="os-emoji">${os.emoji}</div><div><div class="os-name">${os.name}</div><div style="font-size:10px;opacity:.65;margin-top:1px">${histDesks.length} postes</div></div></div><div class="os-count-badge">${osP} présent${osP>1?'s':''}</div></div><div class="os-mini-stats">${mini}</div><div class="desk-area" id="area-${os.id}" style="${blocked||osClosed?'opacity:.5;pointer-events:none':''}"></div>`;
+    grid.appendChild(card);
+    const area=card.querySelector(`#area-${os.id}`);
+    if(os.type==='consultant') renderConsultantArea(area,os,ds,q);
+    else renderManagerArea(area,os,ds,q);
+  });
+}
+function renderConsultantArea(area,os,ds,q){
+  const desks = getConsDesksForDate(os.id, ds);
+  const osClosed = isOSClosed(ds,os.id);
+  const lbl=document.createElement('div');lbl.className='desk-section-label';
+  lbl.textContent = osClosed ? `💼 Bureaux — 🔒 Open Space fermé ce jour` : '💼 Bureaux';
+  if(osClosed) lbl.style.cssText='color:#b91c1c;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:6px 0 4px';
+  area.appendChild(lbl);
+
+  desks.forEach(d=>{
+    const st=getDeskState(ds,d.id);const person=st.person;
+    if(q&&person&&!person.toLowerCase().includes(q))return;
+    if(q&&!person&&!d.label.toLowerCase().includes(q))return;
+    const deskClosed = osClosed || isDeskClosed(ds,d.id);
+    const div=document.createElement('div');
+    div.className=`desk-card ${person&&!deskClosed?'occupied':'empty'} ${!deskClosed?'clickable':''}`;
+    if(deskClosed) div.style.cssText='opacity:.45;background:#f1f5f9;border-color:#cbd5e1;cursor:not-allowed;';
+    if(!deskClosed) div.onclick=()=>openDeskModal(d.id,ds);
+    const closedReason = getDeskClosedReason(ds,d.id)||getDeskClosedReason(ds,os.id);
+    div.innerHTML=`<div class="desk-badge">${d.label}</div><div class="desk-info"><div class="desk-name">${d.label}</div><div class="desk-person ${person&&!deskClosed?'has-person':''}">${deskClosed?`🔒 ${closedReason||'Fermé'}`:person?shortName(person):'Libre — cliquer pour s\'inscrire'}</div></div>${person&&!deskClosed?`<button class="desk-clear" title="Libérer" onclick="event.stopPropagation();quickClear('${d.id}','${ds}')">✕</button>`:''}`;
+    area.appendChild(div);
+  });
+}
+function renderManagerArea(area,os,ds,q){
+  const osClosed = isOSClosed(ds,os.id);
+  const desks=getMgrDesksForDate(ds);
+  const fixed=desks.filter(d=>d.type==='manager-fixed');
+  const slots=desks.filter(d=>d.type==='manager-slot');
+
+  if(fixed.length){
+    const lbl=document.createElement('div');lbl.className='desk-section-label';
+    lbl.textContent = osClosed ? '👔 Managers attitrés — 🔒 Open Space fermé ce jour' : '👔 Managers attitrés';
+    if(osClosed) lbl.style.cssText='color:#b91c1c;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:6px 0 4px';
+    area.appendChild(lbl);
+    fixed.forEach(d=>{
+      const st=getDeskState(ds,d.id);
+      if(q&&!d.fixedPerson.toLowerCase().includes(q))return;
+      const deskClosed = osClosed || isDeskClosed(ds,d.id);
+      const closedReason = getDeskClosedReason(ds,d.id)||getDeskClosedReason(ds,os.id);
+      const div=document.createElement('div');
+      div.className=`desk-card ${st.status&&!deskClosed?'occupied-'+st.status:''}`;
+      if(deskClosed) div.style.cssText='opacity:.45;background:#f1f5f9;border-color:#cbd5e1;';
+      div.innerHTML=deskClosed
+        ? `<div class="desk-badge fixed">👤</div><div class="desk-info"><div class="desk-name">${shortName(d.fixedPerson)}</div><div class="desk-person" style="color:#b91c1c">🔒 ${closedReason||'Fermé'}</div></div>`
+        : `<div class="desk-badge fixed">👤</div><div class="desk-info"><div class="desk-name">${shortName(d.fixedPerson)}</div><div class="desk-person has-person" title="${d.fixedPerson}">Bureau attitré</div></div><div style="display:flex;align-items:center;gap:6px"><div class="status-btns"><button class="sbtn ${st.status==='present'?'on-present':''}" title="Présent" onclick="toggleMgrStatus('${d.id}','${ds}','present')">✅</button><button class="sbtn ${st.status==='remote'?'on-remote':''}" title="Télétravail" onclick="toggleMgrStatus('${d.id}','${ds}','remote')">🏠</button><button class="sbtn ${st.status==='travel'?'on-travel':''}" title="En déplacement" onclick="toggleMgrStatus('${d.id}','${ds}','travel')">✈️</button><button class="sbtn ${st.status==='absent'?'on-absent':''}" title="Absent" onclick="toggleMgrStatus('${d.id}','${ds}','absent')">❌</button></div><button style="width:24px;height:24px;border-radius:6px;border:1.5px solid #c4b5fd;background:#ede9fe;color:#5b21b6;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center" title="Réserver plusieurs jours" onclick="openMgrMultiDayModal('${d.id}','${d.fixedPerson}')">📅</button></div>`;
+      area.appendChild(div);
+    });
+  }
+  if(slots.length){
+    const lbl=document.createElement('div');lbl.className='desk-section-label';
+    lbl.textContent = osClosed ? '🪑 Managers occasionnels — 🔒 Open Space fermé ce jour' : '🪑 Managers occasionnels';
+    if(osClosed) lbl.style.cssText='color:#b91c1c;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:6px 0 4px';
+    area.appendChild(lbl);
+    slots.forEach(d=>{
+      const st=getDeskState(ds,d.id);const person=st.person;
+      if(q&&person&&!person.toLowerCase().includes(q))return;
+      const deskClosed = osClosed || isDeskClosed(ds,d.id);
+      const closedReason = getDeskClosedReason(ds,d.id)||getDeskClosedReason(ds,os.id);
+      const div=document.createElement('div');
+      div.className=`manager-slot ${person&&!deskClosed?'taken':''}`;
+      if(deskClosed){
+        div.style.cssText='opacity:.45;background:#f1f5f9;border-color:#cbd5e1;cursor:not-allowed;';
+        div.innerHTML=`<div class="slot-badge">M</div><div class="slot-info"><div class="slot-label">${d.label}</div><div class="slot-person" style="color:#b91c1c">🔒 ${closedReason||'Fermé'}</div></div>`;
+      } else {
+        div.onclick=()=>openSlotModal(d.id,ds);
+        div.innerHTML=`<div class="slot-badge">M</div><div class="slot-info"><div class="slot-label">${d.label}</div><div class="slot-person ${person?'taken':''}">${person?shortName(person):'Cliquer pour assigner'}</div></div>${person?`<div class="status-btns"><button class="sbtn ${st.status==='present'?'on-present':''}" title="Présent" onclick="event.stopPropagation();toggleMgrStatus('${d.id}','${ds}','present')">✅</button><button class="sbtn ${st.status==='remote'?'on-remote':''}" title="Télétravail" onclick="event.stopPropagation();toggleMgrStatus('${d.id}','${ds}','remote')">🏠</button><button class="sbtn ${st.status==='travel'?'on-travel':''}" title="En déplacement" onclick="event.stopPropagation();toggleMgrStatus('${d.id}','${ds}','travel')">✈️</button><button class="sbtn ${st.status==='absent'?'on-absent':''}" title="Absent" onclick="event.stopPropagation();toggleMgrStatus('${d.id}','${ds}','absent')">❌</button></div>`:''}`;
+      }
+      area.appendChild(div);
+    });
+  }
+}
+function toggleMgrStatus(deskId,ds,status){
+  const st=getDeskState(ds,deskId);
+  const person=st.person||getDeskFixedPerson(deskId);
+  setDeskState(ds,deskId,person,st.status===status?null:status);
+  renderView();
+}
+function getDeskFixedPerson(id){for(const os of OPEN_SPACES){const d=os.desks.find(x=>x.id===id);if(d&&d.fixedPerson)return d.fixedPerson;}return null;}
+function quickClear(id,ds){setDeskState(ds,id,null,null);renderView();}
+function renderWeekCal(){
+  const days=getWeekDays(currentDateStr);
+  let tS=0,tC=0,tM=0;
+  days.forEach(d=>{tS+=countPresent(d,'synergie');tC+=countPresent(d,'confort');tM+=countPresent(d,'manager');});
+  document.getElementById('sTotal').textContent=tS+tC+tM;
+  document.getElementById('sSynergie').textContent=tS;
+  document.getElementById('sConfort').textContent=tC;
+  document.getElementById('sManager').textContent=tM;
+  const content=document.getElementById('viewContent');content.innerHTML='';
+  const wrap=document.createElement('div');wrap.className='cal-wrap';
+  const grid=document.createElement('div');grid.className='week-grid';
+  days.forEach(ds=>{
+    const d=parseDate(ds);const pS=countPresent(ds,'synergie'),pC=countPresent(ds,'confort'),pM=countPresent(ds,'manager');const tot=pS+pC+pM;
+    const holiday=isHoliday(ds);const closed=isClosedDay(ds);const blocked=holiday||closed;
+    const card=document.createElement('div');
+    card.className=`week-day-card ${isToday(ds)?'today':''}`;
+    if(blocked) card.style.cssText=`opacity:.65;cursor:default;background:${closed?'#fff5f5':'#fefce8'};border-color:${closed?'#fca5a5':'#fbbf24'};`;
+    if(!blocked) card.onclick=()=>{currentDateStr=ds;setView('day',document.querySelectorAll('#page-presences .view-btn')[0]);};
+    const blockedBadge=blocked?`<div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:${closed?'#fee2e2':'#fef3c7'};color:${closed?'#b91c1c':'#92400e'}">${closed?'🔒 Fermé':'📅 Férié'}</div>`:'';
+    card.innerHTML=`<div class="week-day-head" style="${blocked?`background:${closed?'#fee2e2':'#fef3c7'}`:''}">`+
+      `<div class="week-day-name">${d.toLocaleDateString('fr-FR',{weekday:'short'})}</div><div class="week-day-num">${d.getDate()}</div></div>`+
+      `<div class="week-day-body">`+
+        (blocked
+          ? `<div style="font-size:11px;font-weight:600;color:${closed?'#b91c1c':'#92400e'};margin-bottom:6px">${closed?getClosedReason(ds):getHolidayName(ds)}</div>${blockedBadge}`
+          : `<div style="font-size:18px;font-weight:800;color:${tot>0?'var(--green)':'var(--gray)'};margin-bottom:6px">${tot} <span style="font-size:11px;font-weight:500">présents</span></div>`+
+            `<div class="week-os-row"><span class="week-os-name">🔵 Synergie</span><span class="week-os-count">${pS}</span></div>`+
+            `<div class="week-os-row"><span class="week-os-name">🟢 Confort</span><span class="week-os-count">${pC}</span></div>`+
+            `<div class="week-os-row"><span class="week-os-name">🟣 Manager</span><span class="week-os-count">${pM}</span></div>`
+        )+
+      `</div>`;
+    grid.appendChild(card);
+  });
+  wrap.appendChild(grid);content.appendChild(wrap);
+}
+function renderMonthCal(){
+  const days=getMonthDays(currentDateStr);
+  let tS=0,tC=0,tM=0;
+  days.filter(d=>d.inMonth).forEach(d=>{tS+=countPresent(d.date,'synergie');tC+=countPresent(d.date,'confort');tM+=countPresent(d.date,'manager');});
+  document.getElementById('sTotal').textContent=tS+tC+tM;document.getElementById('sSynergie').textContent=tS;document.getElementById('sConfort').textContent=tC;document.getElementById('sManager').textContent=tM;
+  const content=document.getElementById('viewContent');content.innerHTML='';
+  const wrap=document.createElement('div');wrap.className='cal-wrap';
+  const hgrid=document.createElement('div');hgrid.className='month-grid';hgrid.style.marginBottom='4px';
+  ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(h=>{const hd=document.createElement('div');hd.className='cal-header';hd.textContent=h;hgrid.appendChild(hd);});
+  wrap.appendChild(hgrid);
+  const mgrid=document.createElement('div');mgrid.className='month-grid';
+  days.forEach(({date:ds,inMonth})=>{
+    const d=parseDate(ds);const weekend=isWeekend(d);
+    const holiday=isHoliday(ds);const closed=isClosedDay(ds);
+    const nonWorking=weekend||holiday||closed;
+    const tot=countPresent(ds,'synergie')+countPresent(ds,'confort')+countPresent(ds,'manager');
+    const cell=document.createElement('div');
+    cell.className=`cal-day ${isToday(ds)?'today':''} ${!inMonth?'other-month':''} ${weekend?'weekend':''}`;
+    if(holiday&&!weekend) cell.style.cssText='background:#fef3c7;opacity:.55;cursor:default;';
+    if(closed&&!weekend) cell.style.cssText='background:#fee2e2;opacity:.55;cursor:default;';
+    if(!nonWorking&&inMonth) cell.onclick=()=>{currentDateStr=ds;setView('day',document.querySelectorAll('#page-presences .view-btn')[0]);};
+    const badge = nonWorking
+      ? (holiday?'<div style="font-size:9px;color:#92400e;font-weight:700">férié</div>':closed?'<div style="font-size:9px;color:#b91c1c;font-weight:700">fermé</div>':'')
+      : (tot>0?`<div class="cal-badge">${tot}</div>`:(inMonth?'<div style="font-size:10px;color:var(--gray)">—</div>':''));
+    cell.innerHTML=`<div class="cal-day-num">${d.getDate()}</div>${badge}`;
+    mgrid.appendChild(cell);
+  });
+  wrap.appendChild(mgrid);content.appendChild(wrap);
+}
+
+// ═══════════════════════ DESK MODAL ═══════════════════════
+function openDeskModal(id,ds){activeDeskId=id;document.getElementById('deskModalTitle').textContent=`Bureau ${id}`;document.getElementById('deskSearch').value='';filterDeskList();openModal('deskModal');}
+function filterDeskList(){
+  const q=document.getElementById('deskSearch').value.toLowerCase();
+  const list=document.getElementById('deskList');
+  const st=getDeskState(currentDateStr,activeDeskId);
+  const taken=getAssigned(currentDateStr);
+  const filtered=visibleConsultantNames().filter(c=>!q||c.toLowerCase().includes(q));
+  list.innerHTML='';
+  if(!filtered.length){list.innerHTML='<div style="padding:16px;text-align:center;color:var(--gray);font-size:12px">Aucun résultat</div>';return;}
+  filtered.forEach(c=>{
+    const isCur=st.person===c;const isTaken=taken.includes(c)&&!isCur;
+    const row=document.createElement('div');row.className=`deskmodal-row ${isCur?'current':''} ${isTaken?'taken':''}`;
+    row.innerHTML=`<span style="font-weight:${isCur?'700':'500'}" title="${c}">${shortName(c)}</span>${isCur?'<span style="color:var(--cyan);font-size:11px;font-weight:700">✓</span>':isTaken?'<span style="font-size:10px;color:var(--gray)">Assigné</span>':''}`;
+    if(!isTaken) row.onclick=()=>{setDeskState(currentDateStr,activeDeskId,c,null);closeModal('deskModal');renderView();showToast('✅',`${shortName(c)} → ${activeDeskId}`);};
+    list.appendChild(row);
+  });
+}
+function clearDesk(){setDeskState(currentDateStr,activeDeskId,null,null);closeModal('deskModal');renderView();showToast('🗑',`Bureau ${activeDeskId} libéré`);}
+function getAssigned(ds){return Object.values(getDayData(ds)).map(s=>s.person).filter(Boolean);}
+
+// ═══════════════════════ SLOT MODAL ═══════════════════════
+function openSlotModal(id,ds){
+  activeSlotId=id;const st=getDeskState(ds,id);
+  document.getElementById('slotModalTitle').textContent=`${id.replace('Manager','Manager ')} — ${fmtShort(ds)}`;
+  const sel=document.getElementById('slotSelect');sel.innerHTML='<option value="">— Libre —</option>';
+  MANAGERS.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=shortName(m);if(st.person===m)o.selected=true;sel.appendChild(o);});
+  const stRow=document.getElementById('slotStatusRow');
+  if(st.person) stRow.innerHTML=`<p style="font-size:12px;margin-bottom:8px;color:var(--gray)">Statut :</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm ${st.status==='present'?'btn-cyan':'btn-outline'}" onclick="qss('present')">✅ Bureau</button><button class="btn btn-sm ${st.status==='remote'?'btn-cyan':'btn-outline'}" onclick="qss('remote')">🏠 Télétravail</button><button class="btn btn-sm ${st.status==='travel'?'btn-cyan':'btn-outline'}" onclick="qss('travel')">✈️ Déplacement</button><button class="btn btn-sm ${st.status==='absent'?'btn-cyan':'btn-outline'}" onclick="qss('absent')">❌ Absent</button></div>`;
+  else stRow.innerHTML='';
+  openModal('slotModal');
+}
+function qss(status){const st=getDeskState(currentDateStr,activeSlotId);setDeskState(currentDateStr,activeSlotId,st.person,status);openSlotModal(activeSlotId,currentDateStr);}
+function confirmSlot(){
+  const person=document.getElementById('slotSelect').value||null;
+  const st=getDeskState(currentDateStr,activeSlotId);
+  setDeskState(currentDateStr,activeSlotId,person,person?(st.status||'present'):null);
+  closeModal('slotModal');renderView();showToast('✅',person?`${shortName(person)} assigné(e)`:'Bureau libéré');
+}
+function resetDay(){
+  const newDay={};
+  OPEN_SPACES.find(o=>o.id==='manager').desks.filter(d=>d.fixedPerson).forEach(d=>{newDay[d.id]={person:d.fixedPerson,status:null};});
+  saveDayData(currentDateStr,newDay);closeModal('resetModal');renderView();showToast('🔄','Présences réinitialisées');
+}
+
+// ── Fermeture agence ──
+function toggleCloseDayModal(){
+  if(currentView!=='day') return;
+  if(isClosedDay(currentDateStr)){
+    removeClosedDay(currentDateStr);renderView();updateCloseDayBtn();
+    showToast('🔓','Jour rouvert — saisie de nouveau possible');
+    return;
+  }
+  document.getElementById('closeDayModalTitle').textContent='🔒 Fermer l\'agence ce jour';
+  document.getElementById('closeDayModalDesc').innerHTML=`Vous allez fermer l'agence le <strong>${fmtLong(currentDateStr)}</strong>.<br>Aucune présence ne pourra être saisie ce jour.`;
+  document.getElementById('closeDayReason').value='';
+  openModal('closeDayModal');
+  setTimeout(()=>document.getElementById('closeDayReason').focus(),120);
+}
+function confirmCloseDay(){
+  const reason=document.getElementById('closeDayReason').value.trim()||'Agence fermée';
+  setClosedDay(currentDateStr,reason);
+  closeModal('closeDayModal');renderView();updateCloseDayBtn();
+  showToast('🔒',`Jour fermé — ${reason}`);
+}
+function updateCloseDayBtn(){
+  const btn=document.getElementById('closeDayBtn');if(!btn)return;
+  const isClosed=isClosedDay(currentDateStr);
+  const isHol=isHoliday(currentDateStr);
+  const dayView=currentView==='day';
+  btn.style.display=dayView?'inline-flex':'none';
+  if(isClosed){
+    btn.textContent='🔓 Rouvrir ce jour';
+    btn.style.background='#fee2e2';btn.style.color='#b91c1c';btn.style.borderColor='#fca5a5';
+  } else {
+    btn.textContent='🔒 Fermer ce jour';
+    btn.style.background='#fff3e0';btn.style.color='#c2410c';btn.style.borderColor='#fed7aa';
+  }
+  btn.disabled=isHol;
+  btn.title=isHol?'Jour férié — déjà exclu automatiquement':'';
+  btn.style.opacity=isHol?'0.45':'1';btn.style.cursor=isHol?'not-allowed':'pointer';
+}
+
+// ═══════════════════════ ANALYSE (plan) ═══════════════════════
+function setPlanPeriod(p,btn,tab){
+  planPeriods[tab]=p;planOffsets[tab]=0;
+  document.querySelectorAll(`#page-${tab} .view-btn`).forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPlan(tab);
+}
+function navPlan(dir,tab){planOffsets[tab]+=dir;renderPlan(tab);}
+
+function getPlanDays(tab){
+  const period=planPeriods[tab],offset=planOffsets[tab];
+  if(period==='week'){
+    const mon=getMondayOfWeek(REAL_TODAY);const base=parseDate(mon);base.setDate(base.getDate()+offset*7);
+    return Array.from({length:5},(_,i)=>{const d=new Date(base);d.setDate(base.getDate()+i);return fmtISO(d);})
+      .filter(d=>!isNonWorkingDay(d));
+  }
+  const d=new Date();d.setMonth(d.getMonth()+offset);
+  const year=d.getFullYear(),month=d.getMonth(),days=[];
+  for(let i=1;i<=new Date(year,month+1,0).getDate();i++){const dd=new Date(year,month,i);const ds=fmtISO(dd);if(!isNonWorkingDay(ds))days.push(ds);}
+  return days;
+}
+
+function renderPlan(tab){
+  const days=getPlanDays(tab);const allData=getAllData();
+  const labelEl=document.getElementById(`planLabel${tab.charAt(0).toUpperCase()+tab.slice(1)}`);
+  const tableEl=document.getElementById(`planTable${tab.charAt(0).toUpperCase()+tab.slice(1)}`);
+  const period=planPeriods[tab];
+  if(period==='week'&&days.length){
+    const d0=parseDate(days[0]),d4=parseDate(days[days.length-1]);
+    labelEl.textContent=d0.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' — '+d4.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
+  } else if(days.length) {
+    labelEl.textContent=parseDate(days[0]).toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  }
+
+  // Managers OS names — collecte sur toutes les configs en vigueur sur la période
+  const mgrNames=new Set();
+  days.forEach(ds=>{
+    const desksForDay=getMgrDesksForDate(ds);
+    desksForDay.filter(d=>d.fixedPerson).forEach(d=>mgrNames.add(d.fixedPerson));
+    const dp=allData[ds]||{};
+    desksForDay.filter(d=>d.type==='manager-slot').forEach(d=>{const st=dp[d.id];if(st&&st.person)mgrNames.add(st.person);});
+  });
+
+  let persons=[];
+  if(tab==='managers'){
+    persons=Array.from(mgrNames).map(n=>({name:n,role:'Manager'})).sort((a,b)=>a.name.localeCompare(b.name));
+  } else {
+    // Analyse Consultants: only active + not deleted
+    const cMap=new Map();
+    visibleConsultantNames().forEach(c=>{if(!mgrNames.has(c))cMap.set(c,'Consultant');});
+    days.forEach(ds=>{const dp=allData[ds]||{};OPEN_SPACES.filter(o=>o.type==='consultant').forEach(os=>{os.desks.forEach(d=>{const st=dp[d.id];if(st&&st.person&&!mgrNames.has(st.person)&&!isDeleted(st.person)&&isActiveConsultant(st.person))cMap.set(st.person,'Consultant');});});});
+    persons=Array.from(cMap.entries()).map(([name,role])=>({name,role})).sort((a,b)=>a.name.localeCompare(b.name));
+  }
+
+  if(!persons.length){tableEl.innerHTML='<tr><td style="padding:40px;text-align:center;color:var(--gray)">Aucune donnée sur cette période.</td></tr>';return;}
+
+  let html='<thead><tr><th>Collaborateur</th><th>Rôle</th>';
+  days.forEach(d=>{html+=`<th>${fmtShort(d)}</th>`;});
+  html+='</tr></thead><tbody>';
+  persons.forEach((p,i)=>{
+    html+=`<tr><td><div class="pname" title="${p.name}">${shortName(p.name)}</div></td><td><div class="prole">${p.role}</div></td>`;
+    days.forEach(ds=>{
+      const dp=allData[ds]||{};let status=null,deskLabel='';
+      if(tab==='managers'){
+        const desksForDay=getMgrDesksForDate(ds);
+        for(const d of desksForDay){
+          const st=dp[d.id];const person=st&&st.person?st.person:(d.fixedPerson||null);
+          if(person===p.name){status=st?st.status:null;deskLabel=d.label;break;}
+        }
+      } else {
+        for(const os of OPEN_SPACES.filter(o=>o.type==='consultant')){
+          for(const d of os.desks){const st=dp[d.id];if(st&&st.person===p.name){status='present';deskLabel=d.label;break;}}
+          if(status)break;
+        }
+      }
+      let pill='<span class="pill-n">—</span>';
+      if(status==='present') pill=`<span class="pill-p">✅ ${deskLabel}</span>`;
+      else if(status==='remote') pill='<span class="pill-r">🏠 TT</span>';
+      else if(status==='travel') pill='<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:var(--purple-lt);color:var(--purple)">✈️ Dép.</span>';
+      else if(status==='absent') pill='<span class="pill-a">❌</span>';
+      html+=`<td class="pcell">${pill}</td>`;
+    });
+    html+='</tr>';
+  });
+  tableEl.innerHTML=html+'</tbody>';
+}
+
+function exportCSV(tab){
+  const days=getPlanDays(tab);const allData=getAllData();
+  let csv='Collaborateur,Rôle,'+days.map(d=>fmtISO(parseDate(d))).join(',')+'\n';
+  const mgrNames=new Set();
+  days.forEach(ds=>{getMgrDesksForDate(ds).filter(d=>d.fixedPerson).forEach(d=>mgrNames.add(d.fixedPerson));const dp=allData[ds]||{};getMgrDesksForDate(ds).filter(d=>d.type==='manager-slot').forEach(d=>{const st=dp[d.id];if(st&&st.person)mgrNames.add(st.person);});});
+  let persons=tab==='managers'?Array.from(mgrNames):allConsultantNames().filter(c=>!mgrNames.has(c));
+  persons.sort().forEach(name=>{
+    const row=[name,tab==='managers'?'Manager':'Consultant'];
+    days.forEach(ds=>{
+      const dp=allData[ds]||{};let status='—';
+      if(tab==='managers'){for(const d of getMgrDesksForDate(ds)){const st=dp[d.id];const person=st&&st.person?st.person:(d.fixedPerson||null);if(person===name){status=st?st.status||'—':'—';break;}}}
+      else{for(const os of OPEN_SPACES.filter(o=>o.type==='consultant')){for(const d of os.desks){const st=dp[d.id];if(st&&st.person===name){status='present';break;}}if(status!=='—')break;}}
+      row.push(status);
+    });
+    csv+=row.join(',')+'\n';
+  });
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download=`analyse_${tab}.csv`;a.click();
+  showToast('⬇️','Export CSV téléchargé');
+}
+
+// ═══════════════════════ STATISTIQUES ═══════════════════════
+function setStatPeriod(p,btn){
+  statPeriod=p;statOffset=0;
+  document.querySelectorAll('#page-stats .view-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('statNavRow').style.display=p==='all'?'none':'flex';
+  renderStats();
+}
+function navStat(dir){statOffset+=dir;renderStats();}
+function getStatDays(){
+  const allData=getAllData();
+  // Stats exclude weekends, French holidays, and manually closed days — past only
+  if(statPeriod==='all'){
+    return Object.keys(allData).filter(d=>!isNonWorkingDay(d) && d<=REAL_TODAY).sort();
+  }
+  if(statPeriod==='week'){
+    const mon=getMondayOfWeek(REAL_TODAY);const base=parseDate(mon);base.setDate(base.getDate()+statOffset*7);
+    const wd=Array.from({length:5},(_,i)=>{const d=new Date(base);d.setDate(base.getDate()+i);return fmtISO(d);});
+    return wd.filter(d=>d<=REAL_TODAY && !isNonWorkingDay(d));
+  }
+  const d=new Date();d.setMonth(d.getMonth()+statOffset);
+  const year=d.getFullYear(),month=d.getMonth(),days=[];
+  for(let i=1;i<=new Date(year,month+1,0).getDate();i++){const dd=new Date(year,month,i);if(!isNonWorkingDay(fmtISO(dd)))days.push(fmtISO(dd));}
+  return days.filter(d=>d<=REAL_TODAY);
+}
+function renderStats(){
+  const days=getStatDays();const allData=getAllData();
+  const mgrOS=OPEN_SPACES.find(o=>o.id==='manager');
+  const mgrNames=new Set();
+  days.forEach(ds=>{
+    getMgrDesksForDate(ds).filter(d=>d.fixedPerson).forEach(d=>mgrNames.add(d.fixedPerson));
+    const dp=allData[ds]||{};
+    getMgrDesksForDate(ds).filter(d=>d.type==='manager-slot').forEach(d=>{const st=dp[d.id];if(st&&st.person)mgrNames.add(st.person);});});
+
+  if(statPeriod==='week'&&days.length){
+    const d0=parseDate(days[0]),d1=parseDate(days[days.length-1]);
+    document.getElementById('statLabel').textContent=d0.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' — '+d1.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
+  } else if(statPeriod==='month'&&days.length){
+    document.getElementById('statLabel').textContent=parseDate(days[0]).toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  } else if(statPeriod==='week'||statPeriod==='month'){
+    document.getElementById('statLabel').textContent='Aucun jour passé sur cette période';
+  } else {document.getElementById('statLabel').textContent='Toutes les données (passées)';}
+
+  // ── Stats per ACTIVE + NOT DELETED consultant (individual analyses only) ──
+  const activeNames = visibleConsultantNames().filter(c=>!mgrNames.has(c));
+  const stats=activeNames.map(name=>{
+    let present=0;
+    days.forEach(ds=>{
+      const dp=allData[ds]||{};
+      for(const os of OPEN_SPACES.filter(o=>o.type==='consultant')){
+        for(const d of os.desks){const st=dp[d.id];if(st&&st.person===name){present++;break;}}
+      }
+    });
+    const pct=days.length>0?Math.round(present/days.length*100):0;
+    return {name,present,total:days.length,pct};
+  }).sort((a,b)=>b.pct-a.pct||a.name.localeCompare(b.name));
+
+  // ── % remplissage par open space (réservations / capacité totale, sur la période) ──
+  const consultantOS = OPEN_SPACES.filter(o=>o.type==='consultant');
+  const fillRates = consultantOS.map(os=>{
+    let booked=0, capacity=0;
+    days.forEach(ds=>{
+      if(isOSClosed(ds,os.id)) return;
+      const dsDesks=getConsDesksForDate(os.id,ds);
+      dsDesks.forEach(d=>{
+        if(isDeskClosed(ds,d.id)) return;
+        capacity++;
+        const dp=allData[ds]||{};
+        if(dp[d.id]&&dp[d.id].person) booked++;
+      });
+    });
+    const pct = capacity>0 ? Math.round(booked/capacity*100) : 0;
+    return {name:os.name, emoji:os.emoji, booked, capacity, pct};
+  });
+  // Manager OS fill rate
+  let mgrBooked=0, mgrCapacity=0;
+  days.forEach(ds=>{
+    if(isOSClosed(ds,'manager')) return;
+    getMgrDesksForDate(ds).forEach(d=>{
+      if(isDeskClosed(ds,d.id)) return;
+      mgrCapacity++;
+      const dp=allData[ds]||{};
+      const st=dp[d.id]; if(st&&st.status==='present') mgrBooked++;
+    });
+  });
+  fillRates.push({name:mgrOS.name, emoji:mgrOS.emoji, booked:mgrBooked, capacity:mgrCapacity, pct:mgrCapacity>0?Math.round(mgrBooked/mgrCapacity*100):0});
+
+  // ── % remplissage moyen PAR JOUR DE LA SEMAINE, pour chaque open space ──
+  const WEEKDAY_LABELS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
+  const fillByWeekday = consultantOS.map(os=>{
+    const perDay = WEEKDAY_LABELS.map((label,wIdx)=>{
+      const matchingDays = days.filter(ds=>parseDate(ds).getDay()===wIdx+1);
+      let booked=0, capacity=0;
+      matchingDays.forEach(ds=>{
+        if(isOSClosed(ds,os.id)) return;
+        const dsDesks=getConsDesksForDate(os.id,ds);
+        dsDesks.forEach(d=>{
+          if(isDeskClosed(ds,d.id)) return;
+          capacity++;
+          const dp=allData[ds]||{};
+          if(dp[d.id]&&dp[d.id].person) booked++;
+        });
+      });
+      const pct = capacity>0 ? Math.round(booked/capacity*100) : 0;
+      return {label, pct, count:matchingDays.length};
+    });
+    return {name:os.name, emoji:os.emoji, perDay};
+  });
+  // Manager OS by weekday too
+  const mgrByWeekday = WEEKDAY_LABELS.map((label,wIdx)=>{
+    const matchingDays = days.filter(ds=>parseDate(ds).getDay()===wIdx+1);
+    let booked=0, capacity=0;
+    matchingDays.forEach(ds=>{
+      if(isOSClosed(ds,'manager')) return;
+      getMgrDesksForDate(ds).forEach(d=>{
+        if(isDeskClosed(ds,d.id)) return;
+        capacity++;
+        const dp=allData[ds]||{};
+        const st=dp[d.id]; if(st&&st.status==='present') booked++;
+      });
+    });
+    const pct = capacity>0 ? Math.round(booked/capacity*100) : 0;
+    return {label, pct, count:matchingDays.length};
+  });
+  fillByWeekday.push({name:mgrOS.name, emoji:mgrOS.emoji, perDay:mgrByWeekday});
+
+  // ── Évolution — moy. présents/jour, 8 dernières semaines passées ──
+  const last8=[];
+  for(let w=-7;w<=0;w++){
+    const mon=getMondayOfWeek(REAL_TODAY);const base=parseDate(mon);base.setDate(base.getDate()+w*7);
+    const wDays=Array.from({length:5},(_,i)=>{const d=new Date(base);d.setDate(base.getDate()+i);return fmtISO(d);}).filter(d=>d<=REAL_TODAY && !isNonWorkingDay(d));
+    let tot=0;
+    wDays.forEach(ds=>{
+      const dp=allData[ds]||{};const s=new Set();
+      consultantOS.forEach(os=>{getConsDesksForDate(os.id,ds).forEach(d=>{const st=dp[d.id];if(st&&st.person&&isActiveConsultant(st.person))s.add(st.person);});});
+      tot+=s.size;
+    });
+    last8.push({label:parseDate(wDays.length?wDays[0]:fmtISO(base)).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}),avg:wDays.length>0?Math.round(tot/wDays.length):0});
+  }
+  const maxAvg=Math.max(...last8.map(w=>w.avg),1);
+
+  // ── Cumul jours de présence par mois (6 derniers mois passés) ──
+  const last6Months=[];
+  for(let m=-5;m<=0;m++){
+    const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+m);
+    const year=d.getFullYear(),month=d.getMonth();
+    const mDays=[];
+    for(let i=1;i<=new Date(year,month+1,0).getDate();i++){const dd=new Date(year,month,i);const dsX=fmtISO(dd);if(!isNonWorkingDay(dsX))mDays.push(dsX);}
+    const pastDays=mDays.filter(x=>x<=REAL_TODAY);
+    let cum=0;
+    pastDays.forEach(ds=>{
+      const dp=allData[ds]||{};const s=new Set();
+      consultantOS.forEach(os=>{os.desks.forEach(dd=>{const st=dp[dd.id];if(st&&st.person&&isActiveConsultant(st.person))s.add(st.person);});});
+      cum+=s.size;
+    });
+    last6Months.push({label:d.toLocaleDateString('fr-FR',{month:'short'}),cum});
+  }
+  const maxCum=Math.max(...last6Months.map(m=>m.cum),1);
+
+  const activeDays=days.filter(ds=>{const dp=allData[ds]||{};return Object.values(dp).some(st=>st.person);}).length;
+  const totalP=stats.reduce((s,x)=>s+x.present,0);
+  const avgPerDay=activeDays>0?Math.round(totalP/activeDays):0;
+  const top=stats.filter(s=>s.present>0);
+
+  document.getElementById('statsContent').innerHTML=`
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">Jours analysés</div><div class="kpi-num" style="color:var(--navy)">${days.length}</div><div class="kpi-sub">${activeDays} avec présences · passé uniquement</div></div>
+      <div class="kpi-card"><div class="kpi-label">Moy. présents/jour</div><div class="kpi-num" style="color:var(--cyan)">${avgPerDay}</div><div class="kpi-sub">sur ${activeNames.length} consultants actifs</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total présences</div><div class="kpi-num" style="color:var(--green)">${totalP}</div><div class="kpi-sub">enregistrées</div></div>
+      <div class="kpi-card"><div class="kpi-label">🏆 Top présent</div><div class="kpi-num" style="font-size:18px;margin-top:4px">${top[0]?shortName(top[0].name):'—'}</div><div class="kpi-sub">${top[0]?top[0].present+' j · '+top[0].pct+'%':''}</div></div>
+    </div>
+
+    <!-- % REMPLISSAGE PAR OPEN SPACE -->
+    <div style="background:#fff;border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:24px">
+      <div style="font-size:13px;font-weight:700;margin-bottom:14px">🪑 Taux de remplissage par open space (sur la période)</div>
+      <div style="display:grid;grid-template-columns:repeat(${fillRates.length},1fr);gap:14px">
+        ${fillRates.map(f=>`
+          <div style="text-align:center">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px">${f.emoji} ${f.name}</div>
+            <div style="font-size:26px;font-weight:800;color:${f.pct>=80?'var(--green)':f.pct>=50?'var(--cyan)':'var(--orange)'}">${f.pct}%</div>
+            <div style="width:100%;height:8px;background:var(--gray-lt);border-radius:4px;margin:8px 0">
+              <div style="width:${f.pct}%;height:8px;background:${f.pct>=80?'var(--green)':f.pct>=50?'var(--cyan)':'var(--orange)'};border-radius:4px;transition:width .3s"></div>
+            </div>
+            <div style="font-size:11px;color:var(--gray)">${f.booked} / ${f.capacity} postes·jours</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- TAUX DE REMPLISSAGE PAR JOUR DE LA SEMAINE ET PAR OPEN SPACE -->
+    <div style="background:#fff;border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:24px">
+      <div style="font-size:13px;font-weight:700;margin-bottom:16px">📆 Taux de remplissage par jour de la semaine &amp; par open space</div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        ${fillByWeekday.map(os=>{
+          const maxPct=Math.max(...os.perDay.map(d=>d.pct),1);
+          const colors=['#0891b2','#16a34a','#7c3aed'];
+          const osIdx=fillByWeekday.indexOf(os);
+          const barColor=colors[osIdx%colors.length];
+          const barBg=osIdx===0?'#e0f7fa':osIdx===1?'#dcfce7':'#ede9fe';
+          return `<div>
+            <div style="font-size:12px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+              <span>${os.emoji}</span><span>${os.name}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+              ${os.perDay.map(day=>`
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                  <div style="font-size:10px;font-weight:700;color:var(--navy)">${day.count>0?day.pct+'%':''}</div>
+                  <div style="width:100%;height:60px;display:flex;flex-direction:column;justify-content:flex-end">
+                    <div style="width:100%;background:${day.count>0?barColor:'#e2e8f0'};border-radius:5px 5px 0 0;height:${day.count>0?Math.max(5,Math.round(day.pct/maxPct*52)):4}px;transition:height .3s;opacity:${day.count>0?1:.35}"></div>
+                  </div>
+                  <div style="height:3px;width:100%;background:${barBg};border-radius:2px"></div>
+                  <div style="font-size:10px;color:var(--gray);font-weight:600">${day.label.slice(0,3)}</div>
+                  ${day.count>0?`<div style="font-size:9px;color:#94a3b8">${day.count}j</div>`:`<div style="font-size:9px;color:#cbd5e1">—</div>`}
+                </div>
+              `).join('')}
+            </div>
+          </div>`;
+        }).join('<hr style="border:none;border-top:1px solid var(--border)">')}
+      </div>
+    </div>
+
+    <!-- EVOLUTION + CUMUL MENSUEL côte à côte -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px">
+      <div style="background:#fff;border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:14px">📈 Évolution — Moy. présents/jour (8 dernières semaines)</div>
+        <div style="display:flex;align-items:flex-end;gap:8px;height:90px">
+          ${last8.map((w,i)=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font-size:10px;font-weight:700;color:var(--navy)">${w.avg||''}</div>
+            <div style="width:100%;background:${i===7?'var(--cyan)':'#bae6fd'};border-radius:4px 4px 0 0;height:${w.avg>0?Math.max(6,Math.round(w.avg/maxAvg*60)):3}px;transition:height .3s"></div>
+            <div style="font-size:9px;color:var(--gray);text-align:center;white-space:nowrap;max-width:100%;overflow:hidden">${w.label}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:14px">📅 Cumul présences par mois (6 derniers mois)</div>
+        <div style="display:flex;align-items:flex-end;gap:8px;height:90px">
+          ${last6Months.map((m,i)=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font-size:10px;font-weight:700;color:var(--navy)">${m.cum||''}</div>
+            <div style="width:100%;background:${i===5?'var(--purple)':'#ddd6fe'};border-radius:4px 4px 0 0;height:${m.cum>0?Math.max(6,Math.round(m.cum/maxCum*60)):3}px;transition:height .3s"></div>
+            <div style="font-size:9px;color:var(--gray);text-align:center;white-space:nowrap;max-width:100%;overflow:hidden">${m.label}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:300px 1fr;gap:18px;align-items:start">
+      <div style="background:#fff;border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:14px">🏆 Classement top 15</div>
+        ${top.slice(0,15).map((s,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)">
+          <div style="width:20px;font-size:11px;font-weight:700;color:${i<3?'var(--cyan)':'var(--gray)'};text-align:right">${i+1}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${s.name}">${shortName(s.name)}</div>
+            <div style="width:100%;height:4px;background:var(--gray-lt);border-radius:2px;margin-top:3px">
+              <div style="width:${s.pct}%;height:4px;background:${s.pct>=80?'var(--green)':s.pct>=50?'var(--cyan)':'var(--orange)'};border-radius:2px"></div>
+            </div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:${s.pct>=80?'#15803d':s.pct>=50?'var(--cyan)':'var(--orange)'};white-space:nowrap">${s.present}j · ${s.pct}%</div>
+        </div>`).join('')}
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);overflow-x:auto">
+        <div style="font-size:13px;font-weight:700;margin-bottom:14px">📋 Consultants actifs</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="background:var(--navy);color:#fff">
+            <th style="padding:8px 10px;text-align:left;border-radius:6px 0 0 0">Consultant</th>
+            <th style="padding:8px 10px;text-align:center">Jours présents</th>
+            <th style="padding:8px 10px;text-align:center">Progression</th>
+            <th style="padding:8px 10px;text-align:center;border-radius:0 6px 0 0">% présence</th>
+          </tr></thead>
+          <tbody>
+            ${stats.map((s,i)=>`<tr style="background:${i%2?'#fafbfc':'#fff'}">
+              <td style="padding:7px 10px;font-weight:600" title="${s.name}">${shortName(s.name)}</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700">${s.present}</td>
+              <td style="padding:7px 10px;text-align:center"><div style="width:80px;height:6px;background:var(--gray-lt);border-radius:3px;margin:0 auto"><div style="width:${s.pct}%;height:6px;background:${s.pct>=80?'var(--green)':s.pct>=50?'var(--cyan)':'var(--orange)'};border-radius:3px"></div></div></td>
+              <td style="padding:7px 10px;text-align:center"><span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:${s.pct>=80?'var(--green-lt)':s.pct>=50?'var(--cyan-lt)':'var(--orange-lt)'};color:${s.pct>=80?'#15803d':s.pct>=50?'#0369a1':'#c2410c'}">${s.pct}%</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function openResetDayFromGestion(){
+  const picker = document.getElementById('resetDayPicker');
+  const ds = picker.value;
+  if(!ds){ showToast('⚠️','Veuillez choisir un jour'); return; }
+  const d = parseDate(ds);
+  document.getElementById('resetDayLabel').textContent = d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('resetDayConfirmBtn').onclick = ()=>{
+    // Same logic as resetDay() but for chosen date
+    const newDay={};
+    OPEN_SPACES.find(o=>o.id==='manager').desks.filter(d=>d.fixedPerson).forEach(d=>{newDay[d.id]={person:d.fixedPerson,status:null};});
+    saveDayData(ds,newDay);
+    closeModal('resetDayModal');
+    showToast('🔄',`Présences du ${d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})} réinitialisées`);
+    // Refresh presences view if currently showing that day
+    if(currentDateStr===ds) renderView();
+  };
+  openModal('resetDayModal');
+}
+
+function closeDeskFromGestion(){
+  const ds=document.getElementById('closeDeskDayPicker').value;
+  if(!ds){showToast('⚠️','Veuillez choisir un jour');return;}
+  if(isWeekend(parseDate(ds))){showToast('⚠️','Impossible de fermer un weekend');return;}
+  const val=document.getElementById('closeDeskSelect').value;
+  const reason=document.getElementById('closeDeskReason').value.trim()||'Fermé';
+  const isOS=val.startsWith('os:');
+  const id=isOS?val.slice(3):val;
+  setClosedDesk(ds,id,reason);
+  // Clean up reservations today + future
+  const cleared=cleanupClosedDeskReservations(ds,id,isOS);
+  document.getElementById('closeDeskReason').value='';
+  renderClosedDesks();
+  if(currentDateStr===ds) renderView();
+  const label=isOS?`Open Space ${id}`:`Bureau ${id}`;
+  showToast('🪑',`${label} fermé le ${parseDate(ds).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}${cleared>0?` · ${cleared} résa supprimée(s)`:''}`);
+}
+
+function renderClosedDesks(){
+  const el=document.getElementById('closedDesksList');
+  if(!el) return;
+  const data=getClosedDesksData();
+  const entries=[];
+  Object.entries(data).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([ds,items])=>{
+    Object.entries(items).forEach(([id,reason])=>{
+      const isOS=OPEN_SPACES.some(o=>o.id===id);
+      const label=isOS?`OS ${id.charAt(0).toUpperCase()+id.slice(1)}`:`Bureau ${id}`;
+      entries.push({ds,id,reason,isOS,label});
+    });
+  });
+  if(!entries.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--gray);padding:10px 0">Aucun bureau/OS fermé enregistré.</div>';
+    return;
+  }
+  el.innerHTML=entries.map(e=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:#eff6ff;border:1px solid #bfdbfe;margin-bottom:6px">
+      <span style="font-size:13px">${e.isOS?'🏢':'🪑'}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700">${e.label} — ${parseDate(e.ds).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long'})}</div>
+        <div style="font-size:11px;color:var(--gray)">${e.reason}</div>
+      </div>
+      <button class="btn btn-sm btn-outline" style="flex-shrink:0" onclick="removeClosedDesk('${e.ds}','${e.id}');renderClosedDesks();if(currentDateStr==='${e.ds}')renderView();showToast('🔓','${e.label} rouvert')">🔓 Rouvrir</button>
+    </div>
+  `).join('');
+}
+
+function initCloseDeskSelect(){
+  // Populate desk options from current OPEN_SPACES
+  ['synergie','confort'].forEach(osId=>{
+    const os=OPEN_SPACES.find(o=>o.id===osId);
+    const grp=document.getElementById(`opt${osId.charAt(0).toUpperCase()+osId.slice(1)}`);
+    if(!os||!grp) return;
+    grp.innerHTML=os.desks.map(d=>`<option value="${d.id}">${d.label}</option>`).join('');
+  });
+}
+
+function closeDayFromGestion(){
+  const ds = document.getElementById('closeDayPicker').value;
+  if(!ds){ showToast('⚠️','Veuillez choisir un jour'); return; }
+  if(isWeekend(parseDate(ds))){ showToast('⚠️','Impossible de fermer un weekend'); return; }
+  if(isHoliday(ds)){ showToast('⚠️','Ce jour est déjà férié'); return; }
+  const reason = document.getElementById('closeDayReasonGestion').value.trim() || 'Agence fermée';
+  setClosedDay(ds, reason);
+  document.getElementById('closeDayReasonGestion').value = '';
+  renderClosedDaysList();
+  if(currentDateStr===ds) renderView();
+  showToast('🔒', `${parseDate(ds).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})} — agence fermée`);
+}
+
+function renderClosedDaysList(){
+  const el = document.getElementById('closedDaysList');
+  if(!el) return;
+  const closed = getClosedDays();
+  const entries = Object.entries(closed).sort((a,b)=>a[0].localeCompare(b[0]));
+  if(!entries.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--gray);padding:10px 0">Aucun jour fermé enregistré.</div>';
+    return;
+  }
+  el.innerHTML = entries.map(([ds,reason])=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:#fff3f3;border:1px solid #fca5a5;margin-bottom:6px">
+      <span style="font-size:13px">🔒</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700">${parseDate(ds).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
+        <div style="font-size:11px;color:var(--gray)">${reason}</div>
+      </div>
+      <button class="btn btn-sm btn-outline" style="flex-shrink:0" onclick="removeClosedDay('${ds}');renderClosedDaysList();if(currentDateStr==='${ds}')renderView();showToast('🔓','Jour rouvert')">🔓 Rouvrir</button>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════ GESTION ═══════════════════════════
+let gestionFilter = 'all';
+function setGestionFilter(f, btn){
+  gestionFilter=f;
+  document.querySelectorAll('#page-gestion .view-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGestion();
+}
+
+function toggleConsultantActive(name){
+  const c = CONSULTANTS.find(x=>x.name===name);
+  if(!c) return;
+  c.active = !c.active;
+  saveMeta();
+  renderGestion();
+  showToast(c.active?'🟢':'⚪', `${shortName(name)} ${c.active?'activé':'désactivé'}`);
+}
+
+function confirmDelete(name){
+  document.getElementById('deleteModalName').textContent = shortName(name);
+  document.getElementById('deleteModalBtn').onclick = ()=>{ closeModal('deleteModal'); deleteConsultant(name); };
+  openModal('deleteModal');
+}
+
+function renderGestion(){
+  const q = (document.getElementById('gestionSearch')?.value||'').toLowerCase();
+  const deleted = getDeleted();
+  const list = document.getElementById('gestionList');
+  if(!list) return;
+
+  // Build full list: all known consultants (active + inactive)
+  let consultants = CONSULTANTS.map(c=>({
+    name: c.name,
+    active: c.active,
+    deleted: deleted.has(c.name)
+  }));
+
+  // Apply filter
+  if(gestionFilter==='active')   consultants = consultants.filter(c=>c.active && !c.deleted);
+  if(gestionFilter==='inactive') consultants = consultants.filter(c=>!c.active && !c.deleted);
+  if(gestionFilter==='deleted')  consultants = consultants.filter(c=>c.deleted);
+
+  // Apply search
+  if(q) consultants = consultants.filter(c=>c.name.toLowerCase().includes(q));
+
+  // Sort: active first, then inactive, then deleted
+  consultants.sort((a,b)=>{
+    const scoreA = a.deleted?2:a.active?0:1;
+    const scoreB = b.deleted?2:b.active?0:1;
+    return scoreA!==scoreB ? scoreA-scoreB : a.name.localeCompare(b.name);
+  });
+
+  document.getElementById('gestionCount').textContent = `${consultants.length} consultant${consultants.length>1?'s':''}`;
+
+  if(!consultants.length){
+    list.innerHTML='<div style="padding:40px;text-align:center;color:var(--gray);font-size:13px">Aucun consultant trouvé</div>';
+    return;
+  }
+
+  list.innerHTML = consultants.map((c,i)=>{
+    const n = c.name.replace(/'/g,"\\'");
+    const statusBadge = c.deleted
+      ? `<span style="background:var(--red-lt);color:var(--red);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">🗑 Supprimé</span>`
+      : c.active
+        ? `<span style="background:var(--green-lt);color:#15803d;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">🟢 Actif</span>`
+        : `<span style="background:var(--gray-lt);color:var(--gray);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">⚪ Inactif</span>`;
+
+    const toggleBtn = !c.deleted
+      ? c.active
+        ? `<button class="btn btn-sm btn-outline" onclick="toggleConsultantActive('${n}')" title="Rendre inactif">⚪ Désactiver</button>`
+        : `<button class="btn btn-sm" style="background:var(--green-lt);color:#15803d;border:1.5px solid #86efac" onclick="toggleConsultantActive('${n}')" title="Rendre actif">🟢 Activer</button>`
+      : '';
+
+    const actionBtn = c.deleted
+      ? `<button class="btn btn-sm btn-outline" onclick="restoreConsultant('${n}')">↩ Restaurer</button>`
+      : `<button class="btn btn-sm btn-danger" onclick="confirmDelete('${n}')">🗑 Supprimer</button>`;
+
+    return `<div style="display:flex;align-items:center;gap:10px;padding:11px 18px;border-bottom:1px solid var(--border);background:${c.deleted?'#fef9f9':i%2?'#fafbfc':'#fff'}">
+      <div style="width:34px;height:34px;border-radius:8px;background:${c.deleted?'#fee2e2':c.active?'var(--green-lt)':'var(--gray-lt)'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${c.deleted?'var(--red)':c.active?'#15803d':'var(--gray)'};flex-shrink:0">${c.name.trim().split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase()}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;${c.deleted?'text-decoration:line-through;opacity:.6':''}" title="${c.name}">${shortName(c.name)}</div>
+        <div style="font-size:11px;color:var(--gray)">${c.name}</div>
+      </div>
+      ${statusBadge}
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        ${toggleBtn}
+        ${actionBtn}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════ MANAGER MULTI-DAY ═══════════════════════════
+let mmdDeskId = null;
+let mmdPerson = null;
+let mmdWeeks = 4;
+let mmdStatus = 'present';
+
+function openMgrMultiDayModal(deskId, person){
+  mmdDeskId = deskId;
+  mmdPerson = person;
+  mmdWeeks = 4;
+  mmdStatus = 'present';
+  document.getElementById('mmdPersonLabel').textContent = shortName(person);
+  document.getElementById('mmdWeeksNum').textContent = mmdWeeks;
+  document.getElementById('mmdStartDate').value = currentDateStr;
+  // Reset buttons
+  document.querySelectorAll('.mmd-day-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.mmd-status-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.mmd-status-btn[data-status="present"]').classList.add('active');
+  updateMmdPreview();
+  openModal('mgrMultiDayModal');
+}
+
+function selectMmdStatus(btn){
+  document.querySelectorAll('.mmd-status-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  mmdStatus = btn.dataset.status;
+  updateMmdPreview();
+}
+
+function changeMmdWeeks(dir){
+  mmdWeeks = Math.max(1, Math.min(12, mmdWeeks+dir));
+  document.getElementById('mmdWeeksNum').textContent = mmdWeeks;
+  updateMmdPreview();
+}
+
+function getMmdTargetDays(){
+  const startDs = document.getElementById('mmdStartDate').value;
+  if(!startDs) return [];
+  const selectedDays = Array.from(document.querySelectorAll('.mmd-day-btn.active')).map(b=>parseInt(b.dataset.day));
+  if(!selectedDays.length) return [];
+  const result = [];
+  const start = parseDate(startDs);
+  for(let w=0; w<mmdWeeks; w++){
+    for(let d=0; d<7; d++){
+      const cur = new Date(start);
+      cur.setDate(start.getDate() + w*7 + d);
+      const ds = fmtISO(cur);
+      if(selectedDays.includes(cur.getDay()) && !isNonWorkingDay(ds)) result.push(ds);
+    }
+  }
+  return result;
+}
+
+function updateMmdPreview(){
+  const el = document.getElementById('mmdPreview');
+  const days = getMmdTargetDays();
+  if(!days.length){ el.textContent='Sélectionnez au moins un jour de la semaine.'; el.style.color='var(--orange)'; return; }
+  const statusLabels = {present:'✅ Présent', remote:'🏠 Télétravail', travel:'✈️ Déplacement', absent:'❌ Absent'};
+  el.textContent = `${shortName(mmdPerson)} · ${statusLabels[mmdStatus]} · ${days.length} jour${days.length>1?'s':''} planifié${days.length>1?'s':''}`;
+  el.style.color = '#15803d';
+}
+
+function confirmMgrMultiDay(){
+  const days = getMmdTargetDays();
+  if(!days.length){ showToast('⚠️','Veuillez sélectionner au moins un jour'); return; }
+  days.forEach(ds=>{
+    setDeskState(ds, mmdDeskId, mmdPerson, mmdStatus);
+  });
+  closeModal('mgrMultiDayModal');
+  renderView();
+  showToast('✅', `${shortName(mmdPerson)} planifié sur ${days.length} jour${days.length>1?'s':''}`);
+}
+
+// ═══════════════════════ MULTI-DAY RESERVATION ═══════════════════════════
+let mdWeeks = 4;
+let mdSelectedPerson = null;
+
+function openMultiDayModal(){
+  // Keep activeDeskId from the desk modal
+  closeModal('deskModal');
+  mdSelectedPerson = null;
+  mdWeeks = 4;
+  document.getElementById('mdDeskLabel').textContent = `Bureau ${activeDeskId}`;
+  document.getElementById('mdWeeksNum').textContent = mdWeeks;
+  document.getElementById('mdStartDate').value = currentDateStr;
+  document.getElementById('mdPersonSearch').value = '';
+  document.getElementById('mdSelectedPersonName').textContent = 'Aucune personne sélectionnée';
+  document.getElementById('mdSelectedPersonRow').style.display = 'none';
+  // Reset day buttons
+  document.querySelectorAll('.md-day-btn').forEach(b=>b.classList.remove('active'));
+  filterMdPersonList();
+  updateMdPreview();
+  openModal('multiDayModal');
+}
+
+function filterMdPersonList(){
+  const q = document.getElementById('mdPersonSearch').value.toLowerCase();
+  const list = document.getElementById('mdPersonList');
+  const taken = getAssigned(currentDateStr);
+  const filtered = visibleConsultantNames().filter(c=>!q||c.toLowerCase().includes(q));
+  if(!filtered.length){ list.innerHTML='<div style="padding:12px;text-align:center;color:var(--gray);font-size:12px">Aucun résultat</div>'; return; }
+  list.innerHTML = filtered.map(c=>{
+    const isCur = mdSelectedPerson===c;
+    return `<div class="deskmodal-row ${isCur?'current':''}" onclick="selectMdPerson('${c.replace(/'/g,"\\'")}')">
+      <span style="font-weight:${isCur?'700':'500'}">${shortName(c)}</span>
+      ${isCur?'<span style="color:var(--cyan);font-size:11px;font-weight:700">✓</span>':''}
+    </div>`;
+  }).join('');
+}
+
+function selectMdPerson(name){
+  mdSelectedPerson = name;
+  document.getElementById('mdSelectedPersonName').textContent = shortName(name);
+  document.getElementById('mdSelectedPersonRow').style.display = 'flex';
+  document.getElementById('mdPersonSearch').value = '';
+  filterMdPersonList();
+  updateMdPreview();
+}
+
+function clearMdPerson(){
+  mdSelectedPerson = null;
+  document.getElementById('mdSelectedPersonName').textContent = 'Aucune personne sélectionnée';
+  document.getElementById('mdSelectedPersonRow').style.display = 'none';
+  filterMdPersonList();
+  updateMdPreview();
+}
+
+function toggleMdDay(btn){
+  btn.classList.toggle('active');
+  updateMdPreview();
+}
+
+function changeMdWeeks(dir){
+  mdWeeks = Math.max(1, Math.min(12, mdWeeks+dir));
+  document.getElementById('mdWeeksNum').textContent = mdWeeks;
+  updateMdPreview();
+}
+
+function getMdTargetDays(){
+  const startDs = document.getElementById('mdStartDate').value;
+  if(!startDs) return [];
+  const selectedDays = Array.from(document.querySelectorAll('.md-day-btn.active')).map(b=>parseInt(b.dataset.day));
+  if(!selectedDays.length) return [];
+  const result = [];
+  const start = parseDate(startDs);
+  // Iterate through weeks
+  for(let w=0; w<mdWeeks; w++){
+    for(let d=0; d<7; d++){
+      const cur = new Date(start);
+      cur.setDate(start.getDate() + w*7 + d);
+      const ds = fmtISO(cur);
+      const dayOfWeek = cur.getDay(); // 1=Mon..5=Fri
+      if(selectedDays.includes(dayOfWeek) && !isNonWorkingDay(ds)){
+        result.push(ds);
+      }
+    }
+  }
+  return result;
+}
+
+function updateMdPreview(){
+  const el = document.getElementById('mdPreview');
+  if(!mdSelectedPerson){
+    el.textContent = 'Sélectionnez une personne, des jours et une période pour voir l\'aperçu.';
+    el.style.color = 'var(--gray)';
+    return;
+  }
+  const days = getMdTargetDays();
+  if(!days.length){
+    el.textContent = 'Sélectionnez au moins un jour de la semaine.';
+    el.style.color = 'var(--orange)';
+    return;
+  }
+  // Check conflicts (already assigned to someone else)
+  const allData = getAllData();
+  const conflicts = days.filter(ds=>{
+    const dp = allData[ds]||{};
+    const st = dp[activeDeskId];
+    return st && st.person && st.person !== mdSelectedPerson;
+  });
+  const msg = `${shortName(mdSelectedPerson)} · ${days.length} jour${days.length>1?'s':''} réservé${days.length>1?'s':''}${conflicts.length>0?` · ⚠️ ${conflicts.length} conflit${conflicts.length>1?'s':''} (bureau déjà occupé ce jour)`:' · aucun conflit'}`;
+  el.textContent = msg;
+  el.style.color = conflicts.length > 0 ? 'var(--orange)' : '#15803d';
+}
+
+function confirmMultiDay(){
+  if(!mdSelectedPerson){ showToast('⚠️','Veuillez choisir une personne'); return; }
+  const days = getMdTargetDays();
+  if(!days.length){ showToast('⚠️','Veuillez sélectionner au moins un jour'); return; }
+  let booked=0, skipped=0;
+  days.forEach(ds=>{
+    const existing = getDeskState(ds, activeDeskId);
+    if(existing.person && existing.person !== mdSelectedPerson){ skipped++; return; } // don't overwrite another person
+    setDeskState(ds, activeDeskId, mdSelectedPerson, null);
+    booked++;
+  });
+  closeModal('multiDayModal');
+  renderView();
+  showToast('✅', `${shortName(mdSelectedPerson)} réservé sur ${booked} jour${booked>1?'s':''}${skipped>0?` · ${skipped} ignoré${skipped>1?'s':''} (déjà occupé)`:''}`);
+}
+
+// ═══════════════════════ IMPORT ═══════════════════════════
+function handleDrop(e){e.preventDefault();document.getElementById('uploadZone').classList.remove('dz');handleFile(e.dataTransfer.files[0]);}
+function handleFile(file){
+  if(!file)return;const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      // Support multiple sheet name formats + column layouts
+      const wsC = wb.Sheets['Nom des consultants'] || wb.Sheets['Nom'] || wb.Sheets[wb.SheetNames[0]];
+      if(wsC){
+        const rows=XLSX.utils.sheet_to_json(wsC,{header:1,defval:''});
+        // Auto-detect header row and columns
+        const header=rows[0].map(h=>String(h).trim().toLowerCase());
+        const nomCol   = header.findIndex(h=>h.includes('nom'))>-1 ? header.findIndex(h=>h.includes('nom')) : 0;
+        const statutCol= header.findIndex(h=>h.includes('statut')||h.includes('actif'));
+        const imported=rows.slice(1).map(r=>{
+          const name=String(r[nomCol]||'').trim();
+          if(!name) return null;
+          let active=true;
+          if(statutCol>-1){
+            const val=String(r[statutCol]||'').trim().toLowerCase();
+            active = !(val==='non' || val==='inactif' || val==='false' || val==='0');
+          }
+          return {name, active};
+        }).filter(Boolean);
+        // Merge: keep existing consultants not in new list as inactive (preserve history)
+        const importedNames=new Set(imported.map(r=>r.name));
+        const kept=CONSULTANTS.filter(c=>!importedNames.has(c.name));
+        CONSULTANTS=[...imported, ...kept.map(c=>({...c,active:false}))];
+      }
+      const wsM=wb.Sheets['Nom des managers'];if(wsM){const rows=XLSX.utils.sheet_to_json(wsM,{header:1,defval:''});MANAGERS=rows.slice(1).map(r=>String(r[0]).trim()).filter(Boolean);}
+      parseOSSheet(wb,'Open Space Synergie','synergie','🔵','S');
+      parseOSSheet(wb,'Open Space Confort','confort','🟢','C');
+      parseManagerSheet(wb);
+      saveMeta();
+      snapshotConsConfig(); // snapshot la nouvelle structure des bureaux consultants
+      // from TODAY onward (future + today), but KEEP past bookings for history.
+      const cleared = cleanupInactiveReservations();
+
+      closeModal('importModal');renderView();
+      showToast('✅',`Import réussi — ${CONSULTANTS.length} consultants${cleared>0?` · ${cleared} réservation(s) future(s) libérée(s)`:''}`);
+    }catch(err){console.error(err);showToast('❌','Erreur de lecture — vérifiez le format du fichier');}
+  };reader.readAsBinaryString(file);
+}
+
+// Removes desk reservations (today + future only) for consultants who are
+// no longer active after an import. Past reservations are untouched.
+function cleanupInactiveReservations(){
+  const allData = getAllData();
+  const activeSet = new Set(activeConsultantNames());
+  let count = 0;
+  Object.keys(allData).forEach(dateStr=>{
+    if(dateStr < REAL_TODAY) return; // keep past history intact
+    const day = allData[dateStr];
+    let changed = false;
+    OPEN_SPACES.filter(o=>o.type==='consultant').forEach(os=>{
+      os.desks.forEach(d=>{
+        const st = day[d.id];
+        if(st && st.person && !activeSet.has(st.person)){
+          day[d.id] = {person:null, status:null};
+          changed = true; count++;
+        }
+      });
+    });
+    if(changed) allData[dateStr] = day;
+  });
+  // Push cleaned desks to Supabase and sync cache
+  Object.keys(allData).forEach(dateStr => {
+    if(dateStr >= REAL_TODAY) {
+      const day = allData[dateStr];
+      Object.entries(day).forEach(([deskId, st]) => {
+        if(!st.person && !st.status) sbDelete('presences', `date_str=eq.${dateStr}&desk_id=eq.${deskId}`);
+      });
+    }
+  });
+  _cache = allData;
+  return count;
+}
+
+function parseOSSheet(wb,sheetName,osId,emoji,prefix){
+  const ws=wb.Sheets[sheetName];if(!ws)return;
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});const desks=[];
+  rows.forEach(row=>row.forEach(cell=>{const v=String(cell).trim();if(v&&v.startsWith(prefix)&&!isNaN(v.slice(1)))desks.push({id:v,label:v});}));
+  const os=OPEN_SPACES.find(o=>o.id===osId);if(os&&desks.length){os.name=sheetName;os.emoji=emoji;os.desks=desks;}
+}
+function parseManagerSheet(wb){
+  const ws=wb.Sheets['Open Space Manager'];if(!ws)return;
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});const fixed=[],slots=[];
+  rows.forEach(row=>row.forEach(cell=>{const v=String(cell).trim();if(!v)return;
+    if(/^Manager\s*\d+$/i.test(v)){const n=v.match(/\d+/)[0];slots.push({id:'Manager'+n,label:'Manager '+n,fixedPerson:null,type:'manager-slot'});}
+    else if(!['FENETRES','COULOIR','Double écran'].includes(v)){fixed.push({id:'M-'+v,label:v,fixedPerson:v,type:'manager-fixed'});}
+  }));
+  const os=OPEN_SPACES.find(o=>o.id==='manager');
+  if(os){const seen=new Set();os.desks=[...fixed,...slots].filter(d=>{if(seen.has(d.id))return false;seen.add(d.id);return true;});}
+}
+
+// ═══════════════════════ UTILS ═══════════════════════════
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
+function showToast(icon,msg){const t=document.getElementById('toast');document.getElementById('toastIcon').textContent=icon;document.getElementById('toastMsg').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ═══════════════════════ MANAGER OS CONFIG (VERSIONNÉ) ═══════════════════════
+// La config de l'OS Manager est versionnée par date :
+// MGR_CONFIG_HISTORY = [{from:"YYYY-MM-DD", desks:[...]}, ...] trié ASC
+// Le snapshot dont from <= ds est la config en vigueur pour ce jour.
+const MGR_CONFIG_KEY = 'agence_v4_mgr_history';
+const CONS_CONFIG_KEY = 'agence_v4_cons_history'; // snapshot for consultant OS desks
+
+// ── Consultant OS snapshot (Synergie + Confort) ──
+let _consHistory = [];
+let _consHistLoaded = false;
+async function loadConsHistory() {
+  if(_consHistLoaded) return;
+  const rows = await sbGet('meta', 'key=eq.cons_history');
+  _consHistory = rows.length ? JSON.parse(rows[0].value||'[]') : [];
+  _consHistLoaded = true;
+}
+function getConsHistory() { return _consHistory; }
+function saveConsHistory(h) { _consHistory = h; sbUpsert('meta', {key:'cons_history', value:JSON.stringify(h)}); }
+
+// Returns the desks for a consultant OS (by osId) as they were on date ds
+function getConsDesksForDate(osId, ds){
+  const history = getConsHistory();
+  const applicable = history.filter(s=>s.from<=ds && s.osId===osId);
+  if(!applicable.length){
+    // No snapshot yet or ds before first snapshot — use earliest or current
+    const all = history.filter(s=>s.osId===osId);
+    if(all.length) return all[0].desks;
+    return (OPEN_SPACES.find(o=>o.id===osId)||{desks:[]}).desks;
+  }
+  return applicable[applicable.length-1].desks;
+}
+
+function snapshotConsConfig(){
+  const history = getConsHistory();
+  ['synergie','confort'].forEach(osId=>{
+    const os = OPEN_SPACES.find(o=>o.id===osId);
+    if(!os) return;
+    const currentDesks = JSON.parse(JSON.stringify(os.desks));
+    const todayIdx = history.findIndex(s=>s.from===REAL_TODAY && s.osId===osId);
+    if(todayIdx>=0){
+      history[todayIdx].desks = currentDesks;
+    } else {
+      history.push({from:REAL_TODAY, osId, desks:currentDesks});
+    }
+  });
+  history.sort((a,b)=>a.from.localeCompare(b.from)||a.osId.localeCompare(b.osId));
+  saveConsHistory(history);
+}
+
+function getMgrOS(){ return OPEN_SPACES.find(o=>o.id==='manager'); }
+
+let _mgrHistory = [];
+let _mgrHistLoaded = false;
+async function loadMgrHistory() {
+  if(_mgrHistLoaded) return;
+  const rows = await sbGet('meta', 'key=eq.mgr_history');
+  _mgrHistory = rows.length ? JSON.parse(rows[0].value||'[]') : [];
+  _mgrHistLoaded = true;
+}
+function getMgrHistory() { return _mgrHistory; }
+function saveMgrHistory(history) { _mgrHistory = history; sbUpsert('meta', {key:'mgr_history', value:JSON.stringify(history)}); }
+
+// Retourne les bureaux de l'OS Manager tels qu'ils étaient pour la date ds.
+// Si pas d'historique, retourne la config actuelle (OPEN_SPACES).
+function getMgrDesksForDate(ds){
+  const history = getMgrHistory();
+  if(!history.length) return getMgrOS().desks;
+  // Dernier snapshot dont from <= ds
+  const applicable = history.filter(s=>s.from<=ds);
+  if(!applicable.length){
+    // ds est antérieur au premier snapshot : on prend le premier
+    return history[0].desks;
+  }
+  return applicable[applicable.length-1].desks;
+}
+
+// Enregistre un snapshot à partir d'aujourd'hui avec les bureaux actuels.
+// Fusionne si un snapshot existe déjà pour today (évite les doublons).
+function snapshotMgrConfig(){
+  const history = getMgrHistory();
+  const currentDesks = JSON.parse(JSON.stringify(getMgrOS().desks)); // deep copy
+  const todayIdx = history.findIndex(s=>s.from===REAL_TODAY);
+  if(todayIdx>=0){
+    history[todayIdx].desks = currentDesks;
+  } else {
+    history.push({from:REAL_TODAY, desks:currentDesks});
+    history.sort((a,b)=>a.from.localeCompare(b.from));
+  }
+  saveMgrHistory(history);
+}
+
+function renderManagerConfig(){
+  const os = getMgrOS();
+  const fixed = os.desks.filter(d=>d.type==='manager-fixed');
+  const slots = os.desks.filter(d=>d.type==='manager-slot');
+
+  const listEl = document.getElementById('mgrFixedList');
+  if(!listEl) return;
+  if(!fixed.length){
+    listEl.innerHTML='<div style="font-size:12px;color:var(--gray);padding:6px 0">Aucun manager attitré.</div>';
+  } else {
+    listEl.innerHTML = fixed.map(d=>{
+      const n = d.fixedPerson.replace(/'/g,"\\'");
+      return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;background:var(--purple-lt);margin-bottom:5px;border:1px solid #c4b5fd">
+        <div style="width:28px;height:28px;border-radius:7px;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${d.fixedPerson.trim().split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase()}</div>
+        <div style="flex:1;font-size:12px;font-weight:600;color:var(--purple)">${d.fixedPerson}</div>
+        <div style="font-size:10px;color:#7c3aed;font-weight:500;background:#ede9fe;padding:2px 7px;border-radius:20px">${d.id.replace('M-','')}</div>
+        <button onclick="removeManagerFixed('${n}')" style="width:24px;height:24px;border-radius:6px;border:none;background:#fde8ff;color:#7c3aed;cursor:pointer;font-size:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center" title="Supprimer">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  const slotCountEl = document.getElementById('mgrSlotCount');
+  const totalEl = document.getElementById('mgrTotalCount');
+  const summaryEl = document.getElementById('mgrSummaryDetail');
+  if(slotCountEl) slotCountEl.textContent = slots.length;
+  if(totalEl) totalEl.textContent = fixed.length + slots.length;
+  if(summaryEl) summaryEl.textContent = `${fixed.length} attitré${fixed.length>1?'s':''} · ${slots.length} slot${slots.length>1?'s':''}`;
+
+  const navSub = document.querySelector('.nav-sub');
+  if(navSub){
+    const total = OPEN_SPACES.reduce((s,o)=>s+o.desks.length,0);
+    navSub.textContent = `3 open spaces · ${total} postes`;
+  }
+}
+
+function addManagerFixed(){
+  const input = document.getElementById('mgrFixedInput');
+  const name = input.value.trim();
+  if(!name){ showToast('⚠️','Saisissez un nom'); return; }
+  const os = getMgrOS();
+  const id = 'M-'+name;
+  if(os.desks.find(d=>d.id===id)){ showToast('⚠️',`${name} existe déjà`); return; }
+  if(os.desks.length >= 12){ showToast('⚠️','Maximum 12 bureaux au total'); return; }
+  const slotIdx = os.desks.findIndex(d=>d.type==='manager-slot');
+  const newDesk = {id, label:name, fixedPerson:name, type:'manager-fixed'};
+  if(slotIdx===-1) os.desks.push(newDesk);
+  else os.desks.splice(slotIdx,0,newDesk);
+  // Init today's data for new fixed manager
+  const day = getDayData(REAL_TODAY);
+  if(!day[id]) { day[id]={person:name,status:null}; saveDayData(REAL_TODAY,day); }
+  saveMeta();
+  snapshotMgrConfig();
+  input.value='';
+  renderManagerConfig();
+  if(currentDateStr) renderView();
+  showToast('🟣',`${name} ajouté comme manager attitré`);
+}
+
+function removeManagerFixed(name){
+  const os = getMgrOS();
+  const id = 'M-'+name;
+  if(!confirm(`Supprimer le bureau attitré de "${name}" ?\nL'historique passé est conservé.`)) return;
+  os.desks = os.desks.filter(d=>d.id!==id);
+  saveMeta();
+  snapshotMgrConfig();
+  renderManagerConfig();
+  if(currentDateStr) renderView();
+  showToast('🟣',`Bureau de ${name} supprimé`);
+}
+
+function adjustManagerSlots(delta){
+  const os = getMgrOS();
+  const slots = os.desks.filter(d=>d.type==='manager-slot');
+  const fixed = os.desks.filter(d=>d.type==='manager-fixed');
+  const newCount = Math.max(0, slots.length + delta);
+  if(newCount === slots.length) return;
+  if(delta > 0 && fixed.length + newCount > 12){ showToast('⚠️','Maximum 12 bureaux au total'); return; }
+
+  if(delta > 0){
+    for(let i=slots.length+1; i<=newCount; i++){
+      os.desks.push({id:'Manager'+i, label:'Manager '+i, fixedPerson:null, type:'manager-slot'});
+    }
+  } else {
+    // Supprimer uniquement les réservations futures (aujourd'hui inclus) du slot retiré
+    const allData = getAllData();
+    let toRemove = slots.length - newCount;
+    while(toRemove > 0){
+      const currentSlots = os.desks.filter(d=>d.type==='manager-slot');
+      const last = currentSlots[currentSlots.length-1];
+      if(!last) break;
+      Object.keys(allData).forEach(ds=>{
+        if(ds >= REAL_TODAY && allData[ds][last.id]){
+          allData[ds][last.id] = {person:null,status:null};
+        }
+      });
+      os.desks = os.desks.filter(d=>d.id!==last.id);
+      toRemove--;
+    }
+    // sync back to cache then push all changed days
+Object.assign(_cache, allData);
+  }
+
+  // Re-numéroter les slots
+  let n=1;
+  os.desks.filter(d=>d.type==='manager-slot').forEach(d=>{ d.id='Manager'+n; d.label='Manager '+n; n++; });
+
+  saveMeta();
+  snapshotMgrConfig(); // ← snapshot daté d'aujourd'hui
+  renderManagerConfig();
+  if(currentDateStr) renderView();
+  const slotNb = os.desks.filter(d=>d.type==='manager-slot').length;
+  showToast('🟣',`${slotNb} slot${slotNb>1?'s':''} occasionnel${slotNb>1?'s':''} · ${os.desks.length} bureaux au total`);
+}
+
+// ═══════════════════════ INIT ═══════════════════════════
+async function init(){
+  // Show loading overlay
+  document.getElementById('loadingOverlay').style.display='flex';
+  try {
+    await loadMeta();
+    await loadAllPresences();
+    await loadClosedDays();
+    await loadClosedDesks();
+    await loadDeleted();
+    await loadMgrHistory();
+    await loadConsHistory();
+  } catch(e) { console.error('Supabase load error:', e); }
+  document.getElementById('loadingOverlay').style.display='none';
+  if(!getMgrHistory().length) snapshotMgrConfig();
+  if(!getConsHistory().length) snapshotConsConfig();
+  const day=getDayData(REAL_TODAY);
+  OPEN_SPACES.find(o=>o.id==='manager').desks.filter(d=>d.fixedPerson).forEach(d=>{if(!day[d.id])day[d.id]={person:d.fixedPerson,status:null};});
+  saveDayData(REAL_TODAY,day);
+  document.getElementById('resetDayPicker').value = REAL_TODAY;
+  document.getElementById('closeDayPicker').value = REAL_TODAY;
+  document.getElementById('closeDeskDayPicker').value = REAL_TODAY;
+  renderView();
+}
+init();
+// Poll Supabase every 30s for real-time updates from other users
+setInterval(async () => {
+  _cacheLoaded = false;
+  await loadAllPresences();
+  renderView();
+}, 30000);
+</script>
+
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay" style="display:none;position:fixed;inset:0;background:rgba(26,46,74,.8);z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+  <div style="width:48px;height:48px;border:4px solid rgba(255,255,255,.2);border-top-color:#00bcd4;border-radius:50%;animation:spin 1s linear infinite"></div>
+  <div style="color:#fff;font-size:15px;font-weight:600;font-family:Inter,sans-serif">Chargement des données…</div>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</div>
+</body>
+</html>
